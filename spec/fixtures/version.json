@@ -1,0 +1,15 @@
+{
+   "created_by" : "a.person",
+   "formats" : {
+      "txt" : {
+         "path" : "app/12345/v001/converted.txt",
+         "filename" : "converted.txt",
+         "content_type" : "text/plain"
+      },
+      "original" : {
+         "path" : "app/12345/v001/original",
+         "filename" : "original",
+         "content_type" : "application/msword"
+      }
+   }
+}

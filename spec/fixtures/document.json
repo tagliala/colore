@@ -1,0 +1,37 @@
+{
+   "doc_id" : "12345",
+   "app" : "app",
+   "versions" : {
+      "v002" : {
+         "created_by" : "a.nother",
+         "formats" : {
+            "txt" : {
+               "content_type" : "text/plain",
+               "path" : "app/12345/v002/converted.txt",
+               "filename" : "converted.txt"
+            },
+            "original" : {
+               "path" : "app/12345/v002/original",
+               "content_type" : "application/msword",
+               "filename" : "original"
+            }
+         }
+      },
+      "v001" : {
+         "created_by" : "a.person",
+         "formats" : {
+            "txt" : {
+               "filename" : "converted.txt",
+               "content_type" : "text/plain",
+               "path" : "app/12345/v001/converted.txt"
+            },
+            "original" : {
+               "filename" : "original",
+               "content_type" : "application/msword",
+               "path" : "app/12345/v001/original"
+            }
+         }
+      }
+   },
+   "current_version" : "v002"
+}

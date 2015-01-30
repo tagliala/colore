@@ -1,0 +1,16 @@
+{
+  "created_by": "a.nother",
+  "created_at": "2015:01:20T:05:08:07+01:00",
+  "formats": {
+    "original": {
+      "content_type": "application/msword",
+      "filename": "original",
+      "path": "app/12345/v002/original"
+    },
+    "txt": {
+      "content_type": "text/plain",
+      "filename": "converted.txt",
+      "path": "app/12345/v002/converted.txt"
+    }
+  }
+}
