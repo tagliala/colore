@@ -6,6 +6,7 @@ require_relative 'doc_key'
 require_relative 'config'
 require_relative 'sidekiq_workers'
 require_relative 'errors'
+require_relative 'converter'
 require_relative 'utils'
 
 module Colore
@@ -154,6 +155,20 @@ module Colore
       begin
         doc = Document.load @storage_dir, DocKey.new(app,doc_id)
         respond 200, 'Information retrieved', doc.to_hash
+      rescue StandardError => e
+        respond e, e.message
+      end
+    end
+
+    #
+    # Convert document
+    #
+    post '/convert' do
+      begin
+        body = params[:file][:tempfile].read
+        content = Converter.new.convert_file( params[:format], body, params[:language] )
+        content_type content.mime_type
+        content
       rescue StandardError => e
         respond e, e.message
       end

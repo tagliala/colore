@@ -1,25 +1,21 @@
 require 'pathname'
 require 'fileutils'
+require 'logger'
 require 'byebug'
 require 'rack/test'
-$: << Pathname.new(__FILE__).realpath.parent.parent + 'lib'
+
+
+SPEC_BASE = Pathname.new(__FILE__).realpath.parent
+
+$: << SPEC_BASE.parent + 'lib'
+require 'heathen'
 
 def fixture name
-  Pathname.new(__FILE__).realpath.parent + 'fixtures' + name
+  SPEC_BASE + 'fixtures' + name
 end
 
-def tmp_storage_dir
-  Pathname.new('/tmp') + "colore_test.#{Process.pid}"
-end
-
-def setup_storage
-  FileUtils.rm_rf tmp_storage_dir
-  FileUtils.mkdir_p tmp_storage_dir
-  FileUtils.cp_r fixture('app'), tmp_storage_dir
-end
-
-def delete_storage
-  FileUtils.rm_rf tmp_storage_dir
+Dir.glob( (SPEC_BASE+"helpers"+"**.rb").to_s ).each do |helper|
+  require helper
 end
 
 module RSpecMixin
