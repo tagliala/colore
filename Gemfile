@@ -9,6 +9,7 @@ gem 'sinatra'
 gem 'iso-639'
 gem 'wkhtmltopdf'
 gem 'sidekiq'
+gem 'rest-client'
 
 gem 'rspec'
 gem 'rack-test'

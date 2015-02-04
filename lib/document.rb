@@ -98,6 +98,12 @@ module Colore
       FileUtils.rm_rf( directory + version )
     end
 
+    def file_path version, filename
+      # TODO: don't like this hard-code
+      # it should really be in the app, but the hash is generated here
+      "/document/#{@doc_key.app}/#{@doc_key.doc_id}/#{version}/#{filename}"
+    end
+
     def get_file version, filename
       path = directory + version + filename
       raise FileNotFound unless File.exist? path
@@ -116,7 +122,7 @@ module Colore
           v_list[v][suffix] = {
             content_type: content_type,
             filename: File.basename(file),
-            path: file.to_s[directory.to_s.length..-1],
+            path: file_path(v,File.basename(file)),
           }
         end
       end

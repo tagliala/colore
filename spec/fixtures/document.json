@@ -8,24 +8,24 @@
       "docx": {
         "content_type": "application/zip; charset=binary",
         "filename": "arglebargle.docx",
-        "path": "/v001/arglebargle.docx"
+        "path": "/document/app/12345/v001/arglebargle.docx"
       },
       "txt": {
         "content_type": "text/plain; charset=us-ascii",
         "filename": "arglebargle.txt",
-        "path": "/v001/arglebargle.txt"
+        "path": "/document/app/12345/v001/arglebargle.txt"
       }
     },
     "v002": {
       "docx": {
         "content_type": "application/zip; charset=binary",
         "filename": "arglebargle.docx",
-        "path": "/v002/arglebargle.docx"
+        "path": "/document/app/12345/v002/arglebargle.docx"
       },
       "txt": {
         "content_type": "text/plain; charset=us-ascii",
         "filename": "arglebargle.txt",
-        "path": "/v002/arglebargle.txt"
+        "path": "/document/app/12345/v002/arglebargle.txt"
       }
     }
   }

@@ -186,6 +186,12 @@ describe Colore::Document do
     end
   end
 
+  context '#file_path' do
+    it 'runs' do
+      expect(document.file_path 'v001', 'arglebargle.docx').to eq "/document/#{app}/#{doc_id}/v001/arglebargle.docx"
+    end
+  end
+
   context '#get_file' do
     it 'runs' do
       content_type, body = document.get_file 'v001', 'arglebargle.docx'

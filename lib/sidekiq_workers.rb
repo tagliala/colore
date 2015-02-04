@@ -8,8 +8,8 @@ module Colore
 
       def perform doc_key_str, version, filename, format, callback_url
         doc_key = DocKey.parse doc_key_str
-        Converter.new.convert doc_key, version, filename, format
-        CallbackWorker.perform_async doc_key_str, version, format, callback_url
+        new_filename = Converter.new.convert doc_key, version, filename, format
+        CallbackWorker.perform_async doc_key_str, version, format, new_filename, callback_url if callback_url
       end
     end
 
@@ -17,7 +17,7 @@ module Colore
       include ::Sidekiq::Worker
       sidekiq_options queue: :colore, retry: 5, backtrace: true
 
-      def perform doc_key_str, version, format, callback_url
+      def perform doc_key_str, version, format, new_filename, callback_url
         doc_key = DocKey.parse doc_key_str
         doc = Document.load C_.storage_directory, doc_key
         rsp_hash = {
@@ -27,9 +27,9 @@ module Colore
           doc_id: doc_key.doc_id,
           version: version,
           format: format,
-          path: doc.file_path(version,format),
+          path: doc.file_path(version,new_filename),
         }
-        RestClient.post callback_url, JSON.pretty_generat(rsp_hash), content_type: :json
+        RestClient.post callback_url, JSON.pretty_generate(rsp_hash), content_type: :json
       end
     end
   end
