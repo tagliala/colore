@@ -1,1 +1,3 @@
 storage_directory: foo
+redis_url: bar
+redis_namespace: foobar

@@ -19,7 +19,7 @@ module Colore
     end
 
     def to_s
-      path
+      path.to_s
     end
 
     def validate val

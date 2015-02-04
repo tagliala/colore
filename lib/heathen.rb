@@ -1,6 +1,5 @@
 require 'filemagic/ext'
 require 'pathname'
-require 'byebug'
 HEATHEN_BASE = Pathname.new(__FILE__).realpath.parent + 'heathen'
 
 require_relative 'heathen/errors'

@@ -18,6 +18,9 @@ module Colore
   class VersionNotFound < Error
     def initialize; super 400, 'Version not found'; end
   end
+  class InvalidVersion < Error
+    def initialize; super 400, 'Invalid version name'; end
+  end
   class VersionIsCurrent < Error
     def initialize; super 400, 'Version is current, change current version first'; end
   end

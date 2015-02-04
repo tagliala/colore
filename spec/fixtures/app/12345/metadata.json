@@ -1,9 +1,0 @@
-{
-  "app": "app",
-  "doc_id": "12345",
-  "title": "Sample document",
-  "current_version": "v002",
-  "versions": [ "v001", "v002" ],
-  "created_by": "a.person",
-  "created_at": "2015-01-20T05:06:07+01:00"
-}

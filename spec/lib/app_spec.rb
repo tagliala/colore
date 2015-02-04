@@ -5,6 +5,7 @@ require 'config'
 describe Colore::App do
   let(:appname) { 'app' }
   let(:doc_id) { '12345' }
+  let(:filename) { 'arglebargle.docx' }
   let(:doc_key) { Colore::DocKey.new(app,doc_id) }
   let(:new_doc_id) { '54321' }
   let(:invalid_doc_id) { 'foobar' }
@@ -32,7 +33,7 @@ describe Colore::App do
 
   context 'POST update document' do
     it 'creates a new document' do
-      post "/document/#{appname}/#{new_doc_id}", {
+      post "/document/#{appname}/#{new_doc_id}/#{filename}", {
           fail_if_exists: false,
           title: 'A title',
           file: Rack::Test::UploadedFile.new(__FILE__, 'application/ruby'),
@@ -45,10 +46,10 @@ describe Colore::App do
       expect(JSON.parse(last_response.body)).to match(
         {"status"=>201, "description"=>"Document stored", "doc_id"=>"54321"}
       )
-      expect(Colore::Sidekiq::ConversionWorker).to have_received(:perform_async).once
+      expect(Colore::Sidekiq::ConversionWorker).to have_received(:perform_async).twice
     end
     it 'fails to create an existing document if not forced' do
-      post "/document/#{appname}/#{doc_id}", {
+      post "/document/#{appname}/#{doc_id}/#{filename}", {
           fail_if_exists: true,
           title: 'A title',
           file: {
@@ -63,7 +64,7 @@ describe Colore::App do
       expect(Colore::Sidekiq::ConversionWorker).to_not have_received(:perform_async)
     end
     it 'adds a new version' do
-      post "/document/#{appname}/#{doc_id}", {
+      post "/document/#{appname}/#{doc_id}/#{filename}", {
           fail_if_exists: false,
           title: 'New title',
           file: Rack::Test::UploadedFile.new(__FILE__, 'application/ruby'),
@@ -76,13 +77,13 @@ describe Colore::App do
       expect(JSON.parse(last_response.body)).to match(
         {"status"=>201, "description"=>"Document stored", "doc_id"=>"12345"}
       )
-      expect(Colore::Sidekiq::ConversionWorker).to have_received(:perform_async).once
+      expect(Colore::Sidekiq::ConversionWorker).to have_received(:perform_async).twice
     end
   end
 
   context 'POST new format' do
     it 'starts a new conversion' do
-      post "/document/#{appname}/#{doc_id}/current/format", {
+      post "/document/#{appname}/#{doc_id}/current/#{filename}/format", {
           formats: [ 'ocr', 'pdf' ],
           backtrace: true
       }
@@ -95,7 +96,7 @@ describe Colore::App do
       expect(Colore::Sidekiq::ConversionWorker).to have_received(:perform_async).once
     end
     it 'fails if invalid document' do
-      post "/document/#{appname}/#{invalid_doc_id}/current/format", {
+      post "/document/#{appname}/#{invalid_doc_id}/current/#{filename}/format", {
           formats: [ 'ocr', 'pdf' ],
           backtrace: true
       }
@@ -106,7 +107,7 @@ describe Colore::App do
       expect(Colore::Sidekiq::ConversionWorker).to_not have_received(:perform_async)
     end
     it 'fails if invalid version' do
-      post "/document/#{appname}/#{doc_id}/fred/format", {
+      post "/document/#{appname}/#{doc_id}/fred/#{filename}/format", {
           formats: [ 'ocr', 'pdf' ],
           backtrace: true
       }
@@ -166,14 +167,14 @@ describe Colore::App do
 
   context 'GET document' do
     it 'runs' do
-      get "/document/#{appname}/#{doc_id}/current/original?backtrace=true"
+      get "/document/#{appname}/#{doc_id}/current/#{filename}?backtrace=true"
       show_backtrace last_response
       expect(last_response.status).to eq 200
       expect(last_response.content_type).to eq 'application/vnd.openxmlformats-officedocument.wordprocessingml.document; charset=binary'
       expect(last_response.body).to_not be_nil
     end
     it 'fails for an invalid document' do
-      get "/document/#{appname}/#{invalid_doc_id}/current/original"
+      get "/document/#{appname}/#{invalid_doc_id}/current/#{filename}"
       expect(last_response.status).to eq 400
       expect(last_response.content_type).to eq 'application/json'
       expect(JSON.parse(last_response.body)).to be_a Hash

@@ -4,11 +4,10 @@ require 'logger'
 require 'byebug'
 require 'rack/test'
 
-
 SPEC_BASE = Pathname.new(__FILE__).realpath.parent
 
 $: << SPEC_BASE.parent + 'lib'
-require 'heathen'
+require 'colore'
 
 def fixture name
   SPEC_BASE + 'fixtures' + name

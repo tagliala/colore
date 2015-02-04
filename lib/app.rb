@@ -1,13 +1,7 @@
 require 'pathname'
 require 'haml'
 require 'sinatra/base'
-require_relative 'document'
-require_relative 'doc_key'
-require_relative 'config'
-require_relative 'sidekiq_workers'
-require_relative 'errors'
-require_relative 'converter'
-require_relative 'utils'
+require_relative 'colore'
 
 module Colore
   # TODO: validate path-like parameters for invalid characters
@@ -48,32 +42,27 @@ module Colore
     #   - formats
     #   - callback_url
     #   - file
-    post '/document/:app/:doc_id' do |app,doc_id|
+    post '/document/:app/:doc_id/:filename' do |app,doc_id,filename|
       begin
         doc_key = DocKey.new app,doc_id
         if Document.exists?(@storage_dir,doc_key)
           raise DocumentExists.new if params[:fail_if_exists] == 'true'
         else
-          Document.create( @storage_dir, doc_key, params[:title] )
+          Document.create @storage_dir, doc_key
         end
         doc = Document.new( @storage_dir, doc_key )
         doc.title = params[:title] if params[:title]
         if params[:file]
-          version_key = doc.new_version
-          doc.add_file(
-            version_key,
-            Format::ORIGINAL,
-            params[:file][:filename],
-            Pathname.new(params[:file][:tempfile].path),
-            params[:created_by]
-          )
-          doc.set_current version_key
+          version = doc.new_version
+          doc.add_file version, filename, Pathname.new(params[:file][:tempfile].path)
+          doc.set_current version
         end
-        if params[:formats]
+        (params[:formats] || []).each do |format|
           Sidekiq::ConversionWorker.perform_async(
-            doc_key,
+            doc_key.to_s,
             doc.current_version,
-            params[:formats],
+            filename,
+            format,
             params[:callback_url]
           )
         end
@@ -90,15 +79,14 @@ module Colore
     #
     # POST params:
     #   - requested_by
-    #   - formats
     #   - callback_url
-    post '/document/:app/:doc_id/:version/format' do |app,doc_id,version|
+    post '/document/:app/:doc_id/:version/:filename/:format' do |app,doc_id,version,filename,format|
       begin
         doc_key = DocKey.new app, doc_id
         raise DocumentNotFound.new unless Document.exists? @storage_dir, doc_key
         doc = Document.load @storage_dir, doc_key
-        raise VersionNotFound.new unless doc.version_exists? version
-        Sidekiq::ConversionWorker.perform_async doc_key, params[:formats], params[:callback_url]
+        raise VersionNotFound.new unless doc.has_version? version
+        Sidekiq::ConversionWorker.perform_async doc_key, version, filename, format, params[:callback_url]
         respond 202, "Conversion initiated"
       rescue StandardError => e
         respond e, e.message
