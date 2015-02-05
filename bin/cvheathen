@@ -1,5 +1,10 @@
 #!/usr/bin/env ruby
-
+#
+# Script:      cvheathen
+# Description: Converts a file (or directory of files) to a given format
+#
+# Usage:       cvheathen --help
+#
 require 'pathname'
 require 'optparse'
 require 'filemagic/ext'
