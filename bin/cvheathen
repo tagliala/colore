@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+
+require 'pathname'
+require 'optparse'
+require 'filemagic/ext'
+require 'mime/types'
+BASE = Pathname.new(__FILE__).realpath.parent.parent
+$: << BASE + 'lib'
+require 'heathen'
+
+action = nil
+in_file = nil
+out_file = nil
+language = 'en'
+recurse = false
+verbose = false
+mode = :file
+
+OptionParser.new do |opts|
+  opts.on( '-a', '--action ACTION', 'Action to perform' ) { |a| action = a }
+  opts.on( '-f', '--file FILENAME', 'Input file or directory' ) { |f| in_file = Pathname.new(f) }
+  opts.on( '-o', '--outfile FILENAME', 'Output file or directory' ) { |f| out_file = Pathname.new(f) }
+  opts.on( '-r', '--recurse', 'Recurse through input directory' ) { recurse = true }
+  opts.on( '-l', '--language LANG', 'Language of the input file(s)' ) { |l| language = l }
+  opts.on( '-v', '--verbose', 'Verbose output' ) { verbose = true }
+  opts.on( '-h', '--help', 'This message' ) { puts opts; exit }
+end.parse!
+
+logger = Logger.new( verbose ? STDOUT : nil )
+converter = Heathen::Converter.new logger: logger
+
+files = []
+
+if in_file.file?
+  abort "Output is a directory, but expected a file" if out_file.directory?
+  content = converter.convert action, File.read(in_file), language
+  File.open( out_file, 'wb' ) { |f| f.write content }
+elsif in_file.directory?
+  abort "Invalid output directory" unless out_file.directory?
+  Dir.glob( in_file + ( recurse ? '**/*' : '*') ).each do |file|
+    next unless Pathname.new(file).file?
+    begin
+      content = converter.convert action, File.read(file), language
+      new_file = Heathen::Filename.suggest_in_new_dir file, content.mime_type, in_file.to_s, out_file.to_s
+      Pathname.new(new_file).parent.mkpath
+      File.open( new_file, 'wb' ) { |f| f.write content }
+    rescue StandardError => e
+      logger.error "Failed to convert #{file}: #{e.message}"
+    end
+  end
+else
+  abort "Invalid input file" unless in_file.file?
+end
+

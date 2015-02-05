@@ -3,6 +3,7 @@ require 'pathname'
 HEATHEN_BASE = Pathname.new(__FILE__).realpath.parent + 'heathen'
 
 require_relative 'heathen/errors'
+require_relative 'heathen/filename'
 require_relative 'heathen/job'
 require_relative 'heathen/task'
 require_relative 'heathen/converter'
