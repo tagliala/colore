@@ -31,10 +31,9 @@ describe Colore::App do
     delete_storage
   end
 
-  context 'POST update document' do
+  context 'PUT update document' do
     it 'creates a new document' do
-      post "/document/#{appname}/#{new_doc_id}/#{filename}", {
-          fail_if_exists: false,
+      put "/document/#{appname}/#{new_doc_id}/#{filename}", {
           title: 'A title',
           file: Rack::Test::UploadedFile.new(__FILE__, 'application/ruby'),
           formats: [ 'ocr', 'pdf' ],
@@ -48,24 +47,24 @@ describe Colore::App do
       )
       expect(Colore::Sidekiq::ConversionWorker).to have_received(:perform_async).twice
     end
-    it 'fails to create an existing document if not forced' do
-      post "/document/#{appname}/#{doc_id}/#{filename}", {
-          fail_if_exists: true,
+    it 'fails to create an existing document' do
+      put "/document/#{appname}/#{doc_id}/#{filename}", {
           title: 'A title',
-          file: {
-            filename: File.basename(__FILE__),
-            tempfile: File.open(__FILE__, 'r'),
-          },
-          formats: [ 'ocr', 'pdf' ]
+          file: Rack::Test::UploadedFile.new(__FILE__, 'application/ruby'),
+          formats: [ 'ocr', 'pdf' ],
+          backtrace: true
       }
+      show_backtrace last_response
       expect(last_response.status).to eq 409
       expect(last_response.content_type).to eq 'application/json'
       expect(JSON.parse(last_response.body)).to be_a Hash
       expect(Colore::Sidekiq::ConversionWorker).to_not have_received(:perform_async)
     end
-    it 'adds a new version' do
+  end
+
+  context 'POST update document' do
+    it 'runs' do
       post "/document/#{appname}/#{doc_id}/#{filename}", {
-          fail_if_exists: false,
           title: 'New title',
           file: Rack::Test::UploadedFile.new(__FILE__, 'application/ruby'),
           formats: [ 'ocr', 'pdf' ],
@@ -78,6 +77,19 @@ describe Colore::App do
         {"status"=>201, "description"=>"Document stored", "doc_id"=>"12345"}
       )
       expect(Colore::Sidekiq::ConversionWorker).to have_received(:perform_async).twice
+    end
+
+    it 'fails if document does not exist' do
+      post "/document/#{appname}/#{new_doc_id}/#{filename}", {
+          title: 'New title',
+          file: Rack::Test::UploadedFile.new(__FILE__, 'application/ruby'),
+          formats: [ 'ocr', 'pdf' ],
+          backtrace: true
+      }
+      expect(last_response.status).to eq 400
+      expect(last_response.content_type).to eq 'application/json'
+      expect(JSON.parse(last_response.body)).to be_a Hash
+      expect(Colore::Sidekiq::ConversionWorker).to_not have_received(:perform_async)
     end
   end
 

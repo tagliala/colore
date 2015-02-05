@@ -33,11 +33,29 @@ module Colore
     end
 
     #
-    # Update document
+    # Create document (will fail if document already exists)
     #
     # POST params:
     #   - created_by
-    #   - fail_if_exists
+    #   - title
+    #   - formats
+    #   - callback_url
+    #   - file
+    put '/document/:app/:doc_id/:filename' do |app,doc_id,filename|
+      begin
+        doc_key = DocKey.new app,doc_id
+        doc = Document.create @storage_dir, doc_key # will raise if doc exists
+        call env.merge( 'REQUEST_METHOD'=>'POST' )
+      rescue StandardError => e
+        respond e, e.message
+      end
+    end
+
+    #
+    # Update document (will advance version and store document)
+    #
+    # POST params:
+    #   - created_by
     #   - title
     #   - formats
     #   - callback_url
@@ -45,18 +63,14 @@ module Colore
     post '/document/:app/:doc_id/:filename' do |app,doc_id,filename|
       begin
         doc_key = DocKey.new app,doc_id
-        if Document.exists?(@storage_dir,doc_key)
-          raise DocumentExists.new if params[:fail_if_exists] == 'true'
-        else
-          Document.create @storage_dir, doc_key
-        end
-        doc = Document.new( @storage_dir, doc_key )
+        doc = Document.load( @storage_dir, doc_key )
         doc.title = params[:title] if params[:title]
         if params[:file]
           version = doc.new_version
           doc.add_file version, filename, Pathname.new(params[:file][:tempfile].path)
           doc.set_current version
         end
+        doc.save_metadata
         (params[:formats] || []).each do |format|
           Sidekiq::ConversionWorker.perform_async(
             doc_key.to_s,
@@ -67,7 +81,9 @@ module Colore
           )
         end
         respond 201, "Document stored", {
+            app: app,
             doc_id: doc_id,
+            path: doc.file_path( Document::CURRENT, filename ),
           }
       rescue StandardError => e
         respond e, e.message
@@ -116,6 +132,7 @@ module Colore
       begin
         doc = Document.load @storage_dir, DocKey.new(app,doc_id)
         doc.delete_version version
+        doc.save_metadata
         respond 200, 'Document version deleted'
       rescue StandardError => e
         respond e, e.message
@@ -123,7 +140,7 @@ module Colore
     end
 
     #
-    # Get document
+    # Get file
     #
     get '/document/:app/:doc_id/:version/:filename' do |app, doc_id, version, filename|
       begin
