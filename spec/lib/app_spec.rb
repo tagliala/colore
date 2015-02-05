@@ -43,7 +43,7 @@ describe Colore::App do
       expect(last_response.status).to eq 201
       expect(last_response.content_type).to eq 'application/json'
       expect(JSON.parse(last_response.body)).to match(
-        {"status"=>201, "description"=>"Document stored", "doc_id"=>"54321"}
+        {"status"=>201, "description"=>"Document stored", "app"=>"app", "doc_id"=>"54321", "path"=>"/document/app/54321/current/arglebargle.docx"}
       )
       expect(Colore::Sidekiq::ConversionWorker).to have_received(:perform_async).twice
     end
@@ -74,7 +74,7 @@ describe Colore::App do
       expect(last_response.status).to eq 201
       expect(last_response.content_type).to eq 'application/json'
       expect(JSON.parse(last_response.body)).to match(
-        {"status"=>201, "description"=>"Document stored", "doc_id"=>"12345"}
+        {"status"=>201, "description"=>"Document stored", "app"=>"app", "doc_id"=>"12345", "path"=>"/document/app/12345/current/arglebargle.docx"}
       )
       expect(Colore::Sidekiq::ConversionWorker).to have_received(:perform_async).twice
     end
