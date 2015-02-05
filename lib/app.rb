@@ -5,6 +5,9 @@ require_relative 'colore'
 
 module Colore
   # TODO: validate path-like parameters for invalid characters
+  #
+  # This is the Sinatra API implementation for Colore.
+  # See (BASE/config.ru) for rackup details
   class App < Sinatra::Base
     set :backtrace, true
     before do
@@ -12,6 +15,7 @@ module Colore
     end
 
     helpers do
+      # Renders all responses (including errors) in a standard JSON format.
       def respond status, message, extra={}
         case status
           when Error
@@ -28,6 +32,9 @@ module Colore
       end
     end
 
+    #
+    # Landing page. A vague intention exists to put the API docco here.
+    #
     get '/' do
       haml :index
     end
@@ -36,7 +43,6 @@ module Colore
     # Create document (will fail if document already exists)
     #
     # POST params:
-    #   - created_by
     #   - title
     #   - formats
     #   - callback_url
@@ -55,7 +61,6 @@ module Colore
     # Update document (will advance version and store document)
     #
     # POST params:
-    #   - created_by
     #   - title
     #   - formats
     #   - callback_url
@@ -94,7 +99,6 @@ module Colore
     # Request new format
     #
     # POST params:
-    #   - requested_by
     #   - callback_url
     post '/document/:app/:doc_id/:version/:filename/:format' do |app,doc_id,version,filename,format|
       begin
@@ -113,7 +117,6 @@ module Colore
     # Delete document
     #
     # DELETE params:
-    #    - deleted_by
     delete '/document/:app/:doc_id' do |app, doc_id|
       begin
         Document.delete @storage_dir, DocKey.new(app,doc_id)
@@ -127,7 +130,6 @@ module Colore
     # Delete document version
     #
     # DELETE params:
-    #    - deleted_by
     delete '/document/:app/:doc_id/:version' do |app, doc_id, version|
       begin
         doc = Document.load @storage_dir, DocKey.new(app,doc_id)
@@ -168,6 +170,10 @@ module Colore
     #
     # Convert document
     #
+    # POST params:
+    #  file     - the file to convert
+    #  format   - the format to convert to
+    #  langauge - the language of the file (defaults to 'en')
     post '/convert' do
       begin
         body = params[:file][:tempfile].read

@@ -1,22 +1,42 @@
+#
+# Sidekiq workers for the Colore system.
+#
+#
 require 'sidekiq'
 
 module Colore
   module Sidekiq
+    # This worker converts a document file to a new format and stores it.
     class ConversionWorker
       include ::Sidekiq::Worker
       sidekiq_options queue: :colore, retry: 5, backtrace: true
 
-      def perform doc_key_str, version, filename, format, callback_url
+      # Converts a document file to a new format. The converted file will be stored in
+      # the document version directory. If the callback_url is specified, the [CallbackWorker]
+      # will be called to POST the conversion results back to the client application.
+      # @param doc_key_str [String] the serialised [DocKey]
+      # @param version [String] the file version
+      # @param filename [String] the file to convert
+      # @param format [String] the format to convert to
+      # @param callback_url [String] optional callback URL
+      def perform doc_key_str, version, filename, format, callback_url=nil
         doc_key = DocKey.parse doc_key_str
         new_filename = Converter.new.convert doc_key, version, filename, format
         CallbackWorker.perform_async doc_key_str, version, format, new_filename, callback_url if callback_url
       end
     end
 
+    # This worker sends responses back to the client application.
     class CallbackWorker
       include ::Sidekiq::Worker
       sidekiq_options queue: :colore, retry: 5, backtrace: true
 
+      # Constructs a conversion response and POSTs it to the specified callback_url.
+      # @param doc_key_str [String] the serialised [DocKey]
+      # @param version [String] the file version
+      # @param format [String] the format converted to
+      # @param filename [String] the converted file name
+      # @param callback_url [Stringoptional callback URL
       def perform doc_key_str, version, format, new_filename, callback_url
         doc_key = DocKey.parse doc_key_str
         doc = Document.load C_.storage_directory, doc_key

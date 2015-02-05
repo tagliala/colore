@@ -1,7 +1,10 @@
 require 'iso-639'
 module Heathen
   class Processor
-    # @param: format - output format. Must be one of:
+    # Converts office documents to their counterpart (e.g. MS Word -> LibreOffice word,
+    # or MS Excel -> LibreOffice Sheet) or to PDF. Calls the external 'libreoffice' utility
+    # to achieve this.
+    # @param: format [String] output format. Must be one of:
     #    pdf - convert to PDF (any libre-office format)
     #    ms  - corresponding Microsoft format
     #    oo  - corresponding LibreOffice format

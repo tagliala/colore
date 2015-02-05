@@ -1,4 +1,7 @@
 #\ -w -p 9240
+#
+# Rackup config for the Colore app
+#
 require 'pathname'
 require "sinatra"
 

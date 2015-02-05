@@ -1,3 +1,6 @@
 #!/bin/bash
+#
+# Script to kick off sidekiq
 
+# TODO: daemonise, blah blah blah
 bundle exec sidekiq -C config/sidekiq.yml -r ./lib/sidekiq_app.rb

@@ -1,5 +1,7 @@
 module Heathen
 
+  # An Executioner object will execute the given command, storing exit status,
+  # STDOUT and STDERR for perusal.
   class Executioner
     attr_reader :logger, :last_exit_status, :last_messages, :last_command,
       :stdout, :stderr
@@ -8,6 +10,12 @@ module Heathen
       @logger = log
     end
 
+    # Executes the given command.
+    #   argv[0] is the command to run
+    #   argv[1+] are the command arguments
+    #   argv[n] can be a [Hash] of options for the execution:
+    #      :binary - STDOUT, STDERR are expected to be binary, so shouldn't be logged
+    #      :dir    - execution directory
     def execute(*argv)
       options = argv.last.class == Hash ? argv.pop : {}
 
@@ -107,6 +115,8 @@ module Heathen
       end
     end
 
+    # Executes tasks in parallel
+    # @param heretics [Array of Array] commands to run
     def quartering(heretics)
       @heretics = heretics
       parallel  = (@heretics.size > 4 ? 4 : @heretics.size)

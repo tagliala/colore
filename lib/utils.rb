@@ -2,6 +2,7 @@ require 'digest'
 
 module Colore
   module Utils
+    # Deep conversion of all hash keys to symbols.
     def self.symbolize_keys obj
       case obj
         when Hash
@@ -16,19 +17,10 @@ module Colore
           obj
       end
     end
+
+    # Deep conversion of all hash keys to symbols.
     def symbolize_keys obj
       Colore::Utils.symbolize_keys obj
-    end
-
-    def self.metadata_filename directory
-      directory + 'metadata.json'
-    end
-
-    def self.read_metadata directory
-      filename = metadata_filename directory
-      return {} unless File.exist? filename
-      md = JSON.parse( File.read(filename) )
-      symbolize_keys md
     end
   end
 end

@@ -1,8 +1,12 @@
 require 'iso-639'
 module Heathen
   class Processor
+    # Performs OCR on the input document, which must be in TIFF format. Calls the 'tesseract'
+    # program to achieve this.
     # @param: format - output format. Possibilities are nil, hocr and pdf
-    #                  (nil creates a text version)
+    #                  nil creates a text version
+    #                  hocr creates a .hocr XML file preserving letter position
+    #                  pdf creates a .pdf file, consisting of the image backed by the text.
     def tesseract format: nil
       expect_mime_type 'image/tiff'
 

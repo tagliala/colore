@@ -1,3 +1,7 @@
+#
+# Application initializer for the Colore Sidekiq process. See (BASE/run_sidekiq) for usage.
+#
+#
 require 'pathname'
 require 'sidekiq'
 
