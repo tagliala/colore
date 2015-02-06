@@ -13,6 +13,10 @@ module Colore
   class C_
     # Base storage directory for all documents
     attr_accessor :storage_directory
+    # File URL base for legacy convert API method
+    attr_accessor :legacy_url_base
+    # Number of days to keep legacy files before purging
+    attr_accessor :legacy_purge_days
     # Redis connection URL (used by sidekiq)
     attr_accessor :redis_url
     # Redis namespace (used by sidekiq)
@@ -28,6 +32,8 @@ module Colore
         yaml = YAML.load File.read(config_file_path)
         c = new
         c.storage_directory = yaml['storage_directory']
+        c.legacy_url_base = yaml['legacy_url_base']
+        c.legacy_purge_days = yaml['legacy_purge_days'].to_i
         c.redis_url = yaml['redis_url']
         c.redis_namespace = yaml['redis_namespace']
         c
@@ -40,6 +46,11 @@ module Colore
       else
         super
       end
+    end
+
+    # Reset config - used for testing
+    def self.reset
+      @config = nil
     end
   end
 end

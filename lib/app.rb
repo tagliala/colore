@@ -1,5 +1,6 @@
 require 'pathname'
 require 'haml'
+require 'net/http'
 require 'sinatra/base'
 require_relative 'colore'
 
@@ -12,6 +13,7 @@ module Colore
     set :backtrace, true
     before do
       @storage_dir = Pathname.new( C_.storage_directory )
+      @legacy_url_base = C_.legacy_url_base || url('/')
     end
 
     helpers do
@@ -28,6 +30,20 @@ module Colore
         return status, {
           status: status,
           description: message,
+        }.merge(extra).to_json
+      end
+      # Renders all responses (including errors) in a standard JSON format.
+      def legacy_error status, message, extra={}
+        case status
+          when Error
+            status = status.http_code
+          when StandardError
+            extra[:backtrace] = status.backtrace if params[:backtrace]
+            status = 500
+        end
+        content_type 'application/json'
+        return status, {
+          error: message,
         }.merge(extra).to_json
       end
     end
@@ -173,7 +189,7 @@ module Colore
     # POST params:
     #  file     - the file to convert
     #  format   - the format to convert to
-    #  langauge - the language of the file (defaults to 'en')
+    #  language - the language of the file (defaults to 'en')
     post '/convert' do
       begin
         body = params[:file][:tempfile].read
@@ -182,6 +198,52 @@ module Colore
         content
       rescue StandardError => e
         respond e, e.message
+      end
+    end
+
+    # Legacy method to convert files
+    # Brought over from Heathen
+    #
+    # POST params:
+    #  file      - the file to convert
+    #  url       - a URL to convert
+    #  action    - the "format"
+    # 
+    post "/#{LegacyConverter::LEGACY}/convert" do
+      begin
+        body = if params[:file]
+          params[:file][:tempfile].read
+        elsif params[:url]
+          Net::HTTP.get URI(params[:url])
+        else
+          raise DocumentNotFound.new "Please specify either 'file' or 'url' POST variable"
+        end
+        path = LegacyConverter.new.convert_and_store params[:action], body, params[:language]
+        converted_url = @legacy_url_base + path
+        content_type 'application/json'
+        {
+          original: '',
+          converted: converted_url,
+        }.to_json
+      rescue StandardError => e
+        legacy_error e, e.message
+      end
+    end
+
+    # Legacy method to retrieve converted file
+    # May only be needed for development if Nginx is used to get the file directly
+    #
+    # POST params:
+    #  file       - the file to convert
+    #  url        - a URL to convert
+    #  action     - the "format"
+    get "/#{LegacyConverter::LEGACY}/:file_id" do |file_id|
+      begin
+        content = LegacyConverter.new.get_file file_id
+        content_type content.mime_type
+        content
+      rescue StandardError => e
+        legacy_error 400, e.message
       end
     end
   end

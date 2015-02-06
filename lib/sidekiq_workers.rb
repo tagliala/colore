@@ -3,6 +3,7 @@
 #
 #
 require 'sidekiq'
+require 'sidetiq'
 
 module Colore
   module Sidekiq
@@ -50,6 +51,30 @@ module Colore
           path: doc.file_path(version,new_filename),
         }
         RestClient.post callback_url, JSON.pretty_generate(rsp_hash), content_type: :json
+      end
+    end
+
+    # This worker periodically purges legacy conversion files (the expectation is that
+    # apps using the legacy service will request the file shortly after posting the
+    # original, so won't need it after then).
+    class LegacyPurgeWorker
+      include ::Sidekiq::Worker
+      include ::Sidetiq::Schedulable
+      sidekiq_options queue: :colore, retry: 0, backtrace: true
+      recurrence backfill: true do
+        daily.hour_of_day(6)
+      end
+
+      # Looks for old legacy docs and deletes them
+      def perform
+        purge_seconds = (C_.legacy_purge_days || 1).to_i * 86400.0
+        LegacyConverter.new.legacy_dir.each_entry do |file|
+          next if file.directory?
+          if Time.now - file.ctime > purge_seconds
+            file.unlink
+            logger.debug "Deleted old legacy file: #{file}"
+          end
+        end
       end
     end
   end

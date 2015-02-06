@@ -214,4 +214,71 @@ describe Colore::App do
       expect(JSON.parse(last_response.body)).to be_a Hash
     end
   end
+
+  context 'POST /legacy/convert' do
+    it 'converts and saves file' do
+      foo = double(Colore::LegacyConverter)
+      allow(Colore::LegacyConverter).to receive(:new) { foo }
+      params = {
+        action: 'pdf',
+        file: Rack::Test::UploadedFile.new(__FILE__, 'application/ruby'),
+      }
+      expect(foo).to receive(:convert_and_store).with(params[:action],String,nil) { 'foobar' }
+      post "/#{Colore::LegacyConverter::LEGACY}/convert", params
+      expect(last_response.status).to eq 200
+      expect(last_response.content_type).to eq 'application/json'
+      body = JSON.parse(last_response.body)
+      expect(body).to be_a Hash
+      expect(body['converted'].to_s).to_not eq ''
+    end
+    it 'converts and saves URL' do
+      foo = double(Colore::LegacyConverter)
+      allow(Colore::LegacyConverter).to receive(:new) { foo }
+      params = {
+        action: 'pdf',
+        url: 'http://localhost/foo/bar',
+      }
+      expect(Net::HTTP).to receive(:get).with(URI(params[:url])) { 'The quick brown flox' }
+      expect(foo).to receive(:convert_and_store).with(params[:action],String,nil) { 'foobar' }
+      post "/#{Colore::LegacyConverter::LEGACY}/convert", params
+      expect(last_response.status).to eq 200
+      expect(last_response.content_type).to eq 'application/json'
+      body = JSON.parse(last_response.body)
+      expect(body).to be_a Hash
+      expect(body['converted'].to_s).to_not eq ''
+    end
+    it 'returns correct JSON structure on fail' do
+      foo = double(Colore::LegacyConverter)
+      allow(Colore::LegacyConverter).to receive(:new) { foo }
+      params = {
+        action: 'pdf',
+        file: Rack::Test::UploadedFile.new(__FILE__, 'application/ruby'),
+      }
+      allow(foo).to receive(:convert_and_store) { raise 'Argh' }
+      post "/#{Colore::LegacyConverter::LEGACY}/convert", params
+      expect(last_response.status).to eq 500
+      expect(last_response.content_type).to eq 'application/json'
+      body = JSON.parse(last_response.body)
+      expect(body).to be_a Hash
+      expect(body['error']).to eq 'Argh'
+    end
+  end
+
+  context 'GET /legacy/:file_id' do
+    it 'runs' do
+      Colore::LegacyConverter.new.store_file 'foo.txt', 'The quick brown fox'
+      get "/#{Colore::LegacyConverter::LEGACY}/foo.txt"
+      expect(last_response.status).to eq 200
+      expect(last_response.content_type).to eq 'text/plain; charset=us-ascii'
+      expect(last_response.body).to eq 'The quick brown fox'
+    end
+    it 'returns correct JSON structure on fail' do
+      get "/#{Colore::LegacyConverter::LEGACY}/foo.txt"
+      expect(last_response.status).to eq 400
+      expect(last_response.content_type).to eq 'application/json'
+      body = JSON.parse(last_response.body)
+      expect(body).to be_a Hash
+      expect(body['error'].to_s).to_not eq ''
+    end
+  end
 end

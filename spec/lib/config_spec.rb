@@ -3,7 +3,12 @@ require 'config'
 
 describe Colore::C_ do
   before do
+    described_class.reset
     allow(described_class).to receive(:config_file_path) { fixture('app.yml') }
+  end
+
+  after do
+    described_class.reset
   end
 
   context '.config' do
