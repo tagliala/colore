@@ -17,18 +17,18 @@ module Heathen
   class Task
     class << self
       def tasks
-        @tasks ||= []
+        @tasks ||= {}
       end
 
       # Registers a code block to be run for the given action and mime type.
       def register action, mime_type_pattern, &block
-        tasks << { action: action, mime_type_pattern: mime_type_pattern, proc: block }
+        tasks[task_key(action,mime_type_pattern)] = { action: action, mime_type_pattern: mime_type_pattern, proc: block }
       end
 
       # Finds a registered task suitable for the given action and mime type (note, the first
       # suitable one will be selected).
       def find action, mime_type
-        tasks.each do |task|
+        tasks.each do |k,task|
           if task[:action] == action && mime_type =~ %r[#{task[:mime_type_pattern]}]
             return task
           end
@@ -36,15 +36,18 @@ module Heathen
         raise TaskNotFound.new action, mime_type
       end
 
-      # Performs a task (generally called in a 
-      #def perform action, job
-        #task = find action, job.mime_type
-        #task[:proc].call job
-      #end
+      # Deletes any tasks that are keyed for the given action (and optional mime_type pattern, as specified in register)
+      # Used for testing purposes
+      def clear action, mime_type=nil
+        tasks.keys.each do |key|
+          tasks.delete key if key =~ %r[#{task_key(action,mime_type)}]
+        end
+      end
 
-      # Deletes all registered tasks
-      def clear
-        @tasks = []
+      protected
+
+      def task_key action, mime_type
+        "#{action} -- #{mime_type}"
       end
     end
   end
@@ -74,3 +77,7 @@ Heathen::Task.register 'openoffice', '.*' do
   libreoffice 'oo'
 end
 
+# support legacy method
+Heathen::Task.register 'doc', '.*' do
+  perform_task 'microsoft'
+end

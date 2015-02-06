@@ -16,7 +16,10 @@ end
 
 describe Heathen::Converter do
   before do
-    Heathen::Task.clear
+    Heathen::Task.clear 'test'
+  end
+  after do
+    Heathen::Task.clear 'test'
   end
 
   it 'runs a successful task' do

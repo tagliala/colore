@@ -10,6 +10,7 @@ gem 'iso-639'
 gem 'wkhtmltopdf'
 gem 'sidekiq'
 gem 'rest-client'
+gem 'mail'
 
 gem 'rspec'
 gem 'rack-test'
