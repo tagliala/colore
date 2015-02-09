@@ -24,6 +24,8 @@ module Colore
         doc_key = DocKey.parse doc_key_str
         new_filename = Converter.new.convert doc_key, version, filename, format
         CallbackWorker.perform_async doc_key_str, version, format, new_filename, callback_url if callback_url
+      rescue Heathen::TaskNotFound => e
+        logger.warn "#{e.message}, will not attempt to re-process this request"
       end
     end
 

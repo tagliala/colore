@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'unicorn'
+gem 'thin'
 gem 'json'
 gem 'ruby-filemagic'
 gem 'mime-types'
@@ -15,5 +16,6 @@ gem 'mail'
 
 gem 'rspec'
 gem 'rack-test'
+gem 'simplecov'
 gem 'byebug'
-gem 'api-config', git: 'http://code.ifad.org/api-config'
+#gem 'api-config', git: 'http://code.ifad.org/api-config'

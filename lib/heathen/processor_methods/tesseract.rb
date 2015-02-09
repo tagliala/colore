@@ -12,7 +12,7 @@ module Heathen
 
       # Grrrrrrrrrrrrrrrrrrrr Iso2/3 grrrrrrrrrrrrr
       lang = ISO_639.find job.language
-      raise InvalidLanguageStep.new(job.language) if lang.nil?
+      raise InvalidLanguageInStep.new(job.language) if lang.nil?
 
       target_file = temp_file_name
       executioner.execute(

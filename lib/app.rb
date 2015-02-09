@@ -16,38 +16,6 @@ module Colore
       @legacy_url_base = C_.legacy_url_base || url('/')
     end
 
-    helpers do
-      # Renders all responses (including errors) in a standard JSON format.
-      def respond status, message, extra={}
-        case status
-          when Error
-            status = status.http_code
-          when StandardError
-            extra[:backtrace] = status.backtrace if params[:backtrace]
-            status = 500
-        end
-        content_type 'application/json'
-        return status, {
-          status: status,
-          description: message,
-        }.merge(extra).to_json
-      end
-      # Renders all responses (including errors) in a standard JSON format.
-      def legacy_error status, message, extra={}
-        case status
-          when Error
-            status = status.http_code
-          when StandardError
-            extra[:backtrace] = status.backtrace if params[:backtrace]
-            status = 500
-        end
-        content_type 'application/json'
-        return status, {
-          error: message,
-        }.merge(extra).to_json
-      end
-    end
-
     #
     # Landing page. A vague intention exists to put the API docco here.
     #
@@ -88,7 +56,7 @@ module Colore
         doc.title = params[:title] if params[:title]
         if params[:file]
           version = doc.new_version
-          doc.add_file version, filename, Pathname.new(params[:file][:tempfile].path)
+          doc.add_file version, filename, params[:file][:tempfile].read
           doc.set_current version
         end
         doc.save_metadata
@@ -244,6 +212,38 @@ module Colore
         content
       rescue StandardError => e
         legacy_error 400, e.message
+      end
+    end
+
+    helpers do
+      # Renders all responses (including errors) in a standard JSON format.
+      def respond status, message, extra={}
+        case status
+          when Colore::Error
+            status = status.http_code
+          when StandardError
+            extra[:backtrace] = status.backtrace if params[:backtrace]
+            status = 500
+        end
+        content_type 'application/json'
+        return status, {
+          status: status,
+          description: message,
+        }.merge(extra).to_json
+      end
+      # Renders all responses (including errors) in a standard JSON format.
+      def legacy_error status, message, extra={}
+        case status
+          when Error
+            status = status.http_code
+          when StandardError
+            extra[:backtrace] = status.backtrace if params[:backtrace]
+            status = 500
+        end
+        content_type 'application/json'
+        return status, {
+          error: message,
+        }.merge(extra).to_json
       end
     end
   end

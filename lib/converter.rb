@@ -24,7 +24,7 @@ module Colore
       # TODO - handling for variant formats with the same extension
       #        probably by adding format info before suffix
       #        e.g. foo.40x40.jpg
-      new_filename = "#{filename[0..-(File.extname(filename).length+1)]}.#{new_format}"
+      new_filename = Heathen::Filename.suggest filename, new_content.mime_type
       doc.add_file version, new_filename, new_content
       doc.save_metadata
       return new_filename
@@ -37,6 +37,10 @@ module Colore
     # @return [String] the converted file body
     def convert_file format, orig_content, language='en'
       Heathen::Converter.new.convert(format, orig_content, language)
+    rescue Heathen::TaskNotFound => e
+      raise InvalidFormat.new( e.message )
+    rescue Heathen::Error => e
+      raise ConversionError.new( e )
     end
   end
 end

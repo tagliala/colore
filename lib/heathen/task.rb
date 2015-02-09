@@ -58,6 +58,11 @@ Heathen::Task.register 'ocr', 'image/.*' do
   tesseract format: 'pdf'
 end
 
+Heathen::Task.register 'ocr_text', 'image/.*' do
+  convert_image to: :tiff, params: '-depth 8 -density 300 -background white +matte'
+  tesseract format: nil
+end
+
 Heathen::Task.register 'pdf', '.*' do
   case job.mime_type
     when %r[image/*]

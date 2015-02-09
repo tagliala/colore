@@ -3,6 +3,9 @@ require 'fileutils'
 require 'logger'
 require 'byebug'
 require 'rack/test'
+require 'simplecov'
+
+SimpleCov.start
 
 SPEC_BASE = Pathname.new(__FILE__).realpath.parent
 
@@ -30,3 +33,5 @@ RSpec::configure do |rspec|
   rspec.include RSpecMixin
 end
 
+require 'sidekiq/testing'
+Sidekiq::Logging.logger = nil

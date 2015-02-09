@@ -5,12 +5,21 @@ describe Colore::Sidekiq::ConversionWorker do
   let(:doc_key) { Colore::DocKey.new('app','12345') }
   let(:callback_url) { 'http://foo/bar' }
 
+  before do
+    @mock_converter = double(Colore::Converter)
+    allow(Colore::Converter).to receive(:new) { @mock_converter }
+    allow(@mock_converter).to receive(:convert)
+  end
+
   context '#perform' do
     it 'runs' do
-      mock_converter = double(Colore::Converter)
-      allow(Colore::Converter).to receive(:new) { mock_converter }
-      allow(mock_converter).to receive(:convert)
       expect(Colore::Sidekiq::CallbackWorker).to receive(:perform_async)
+      described_class.new.perform doc_key.to_s, 'current', 'arglebargle.docx', 'pdf', callback_url
+    end
+
+    it 'gives up on Heathen::TaskNotFound' do
+      allow(@mock_converter).to receive(:convert) { raise Heathen::TaskNotFound.new('foo','bar') }
+      expect(Colore::Sidekiq::CallbackWorker).not_to receive(:perform_async)
       described_class.new.perform doc_key.to_s, 'current', 'arglebargle.docx', 'pdf', callback_url
     end
   end

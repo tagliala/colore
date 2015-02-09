@@ -24,10 +24,15 @@ module Colore
   class VersionIsCurrent < Error
     def initialize; super 400, 'Version is current, change current version first'; end
   end
-  class InvalidFormat < StandardError
-    def initialize; super 400, 'Invalid format'; end
+  class InvalidFormat < Error
+    def initialize message=nil; super 400, (message||'Invalid format') ; end
   end
   class FileNotFound < Error
     def initialize; super 400, 'Requested file not found'; end
+  end
+  class ConversionError < Error
+    def initialize heathen_error
+      super 500, "Conversion error: #{heathen_error.message}"
+    end
   end
 end

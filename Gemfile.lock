@@ -1,9 +1,3 @@
-GIT
-  remote: http://code.ifad.org/api-config
-  revision: 707a7cdbcc49bf26cac497930b5548c8d4daca44
-  specs:
-    api-config (0.0.1)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -15,8 +9,11 @@ GEM
       timers (~> 4.0.0)
     columnize (0.9.0)
     connection_pool (2.1.1)
+    daemons (1.1.9)
     debugger-linecache (1.2.0)
     diff-lcs (1.2.5)
+    docile (1.1.5)
+    eventmachine (1.0.4)
     haml (4.0.6)
       tilt
     hitimes (1.2.2)
@@ -27,6 +24,7 @@ GEM
     mail (2.6.3)
       mime-types (>= 1.16, < 3)
     mime-types (2.4.3)
+    multi_json (1.10.1)
     netrc (0.10.2)
     rack (1.6.0)
     rack-protection (1.5.3)
@@ -63,11 +61,20 @@ GEM
       celluloid (>= 0.14.1)
       ice_cube (= 0.11.1)
       sidekiq (>= 3.0.0)
+    simplecov (0.9.1)
+      docile (~> 1.1.0)
+      multi_json (~> 1.0)
+      simplecov-html (~> 0.8.0)
+    simplecov-html (0.8.0)
     sinatra (1.4.5)
       rack (~> 1.4)
       rack-protection (~> 1.4)
       tilt (~> 1.3, >= 1.3.4)
     slop (3.6.0)
+    thin (1.6.3)
+      daemons (~> 1.0, >= 1.0.9)
+      eventmachine (~> 1.0)
+      rack (~> 1.0)
     tilt (1.4.1)
     timers (4.0.1)
       hitimes
@@ -81,7 +88,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  api-config!
   byebug
   haml
   iso-639
@@ -94,6 +100,8 @@ DEPENDENCIES
   ruby-filemagic
   sidekiq
   sidetiq
+  simplecov
   sinatra
+  thin
   unicorn
   wkhtmltopdf

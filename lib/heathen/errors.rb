@@ -23,7 +23,7 @@ module Heathen
   # occurred (So could be supplied to the client application without confusing anybody)
   class StepError < Error
     def initialize method=nil
-      calling_method = caller[1]
+      calling_method = caller[2]
       method = calling_method.gsub(/.*[`](.*)'$/,'\\1')
       super "#{message} in step '#{method}'"
     end
@@ -47,6 +47,13 @@ module Heathen
   class InvalidParameterInStep < StepError
     def initialize param_name, param_value
       super( "Invalid parameter: #{param_name}: #{param_value}" )
+    end
+  end
+
+  # Raised if an job language is invalid for the step
+  class InvalidLanguageInStep < StepError
+    def initialize language
+      super( "Invalid language: #{language}" )
     end
   end
 end
