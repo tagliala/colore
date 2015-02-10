@@ -1,4 +1,4 @@
-#\ -w -p 9240
+#\ -w -o 0.0.0.0 -p 9240
 #
 # Rackup config for the Colore app
 #

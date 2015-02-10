@@ -50,14 +50,14 @@ PUT /document/:app/:doc_id/:filename
 Params: (suggest using multipart/form-data)
   file         - the uploaded file object (e.g. from &gt;input type="file"/&lt;
   title        - a description of the document (optional)
-  formats      - an array of conversions to perform (optional)
+  actions      - an array of conversions to perform (optional)
   callback_url - a URL that Colore will call when the conversions are completed (optional)
 
 #### Example:
 Request:
   PUT /document/myapp/12345/foo.docx
     title=A test document
-    formats=["pdf","oo"]
+    actions=["pdf","oo"]
 Response:
   {
     "status": 201,
@@ -69,21 +69,21 @@ Response:
 
 ### Update document
 
-This method will create a new version of an existing document and store the supplied file. If conversion formats are specified, these conversions will be scheduled to be performed asynchronously, and will POST to the optional callback_url when each is completed.
+This method will create a new version of an existing document and store the supplied file. If conversion actions are specified, these conversions will be scheduled to be performed asynchronously, and will POST to the optional callback_url when each is completed.
 
 POST /document/:app/:doc_id/:filename
 
 Params: (suggest using multipart/form-data)
   file         - the uploaded file object (e.g. from &gt;input type="file"/&lt;
   title        - a description of the document (optional)
-  formats      - an array of conversions to perform (optional)
+  actions      - an array of conversions to perform (optional)
   callback_url - a URL that Colore will call when the conversions are completed (optional)
 
 #### Example:
 Request:
   POST /document/myapp/12345/foo.docx
     title=A test document
-    formats=["pdf","oo"]
+    actions=["pdf","oo"]
 Response:
   {
     "status": 201,
@@ -93,15 +93,15 @@ Response:
     "path": "/documents/myapp/12345/current/foo.docx"
   }
 
-### Request new format
+### Request new conversion
 
 This method will request a new conversion be performed on a document version. Colore will do this asynchronously and will POST to the optional callback_url when completed.
 
-POST /document/:app/:doc_id/:version/:filename/:format
+POST /document/:app/:doc_id/:version/:filename/:action
 
 Params: (suggest using multipart/form-data)
   version      - the version to convert (e.g. 'v001', or 'current')
-  format       - the format to convert to (e.g. pdf)
+  action       - the conversion to perform (e.g. pdf)
   callback_url - a URL that Colore will call when the conversions are completed (optional)
 
 #### Example:
@@ -217,14 +217,14 @@ POST /convert
 
 Params: (suggest using multipart/form-data)
   file      - the file to convert
-  format    - the format to convert to (e.g. 'pdf')
+  action    - the conversion to perform (e.g. 'pdf')
   language  - the file language (defaults to 'en')
 
 #### Example:
 
 POST /convert
   file=... foo.docx ...
-  format=pdf
+  action=pdf
   language=en
 
 Response:

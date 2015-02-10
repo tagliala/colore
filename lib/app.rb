@@ -28,7 +28,7 @@ module Colore
     #
     # POST params:
     #   - title
-    #   - formats
+    #   - actions
     #   - callback_url
     #   - file
     put '/document/:app/:doc_id/:filename' do |app,doc_id,filename|
@@ -46,7 +46,7 @@ module Colore
     #
     # POST params:
     #   - title
-    #   - formats
+    #   - actions
     #   - callback_url
     #   - file
     post '/document/:app/:doc_id/:filename' do |app,doc_id,filename|
@@ -60,12 +60,12 @@ module Colore
           doc.set_current version
         end
         doc.save_metadata
-        (params[:formats] || []).each do |format|
+        (params[:actions] || []).each do |action|
           Sidekiq::ConversionWorker.perform_async(
             doc_key.to_s,
             doc.current_version,
             filename,
-            format,
+            action,
             params[:callback_url]
           )
         end
@@ -80,17 +80,17 @@ module Colore
     end
 
     #
-    # Request new format
+    # Request new conversion
     #
     # POST params:
     #   - callback_url
-    post '/document/:app/:doc_id/:version/:filename/:format' do |app,doc_id,version,filename,format|
+    post '/document/:app/:doc_id/:version/:filename/:action' do |app,doc_id,version,filename,action|
       begin
         doc_key = DocKey.new app, doc_id
         raise DocumentNotFound.new unless Document.exists? @storage_dir, doc_key
         doc = Document.load @storage_dir, doc_key
         raise VersionNotFound.new unless doc.has_version? version
-        Sidekiq::ConversionWorker.perform_async doc_key, version, filename, format, params[:callback_url]
+        Sidekiq::ConversionWorker.perform_async doc_key, version, filename, action, params[:callback_url]
         respond 202, "Conversion initiated"
       rescue StandardError => e
         respond e, e.message
@@ -156,12 +156,12 @@ module Colore
     #
     # POST params:
     #  file     - the file to convert
-    #  format   - the format to convert to
+    #  action   - the conversion to perform
     #  language - the language of the file (defaults to 'en')
     post '/convert' do
       begin
         body = params[:file][:tempfile].read
-        content = Converter.new.convert_file( params[:format], body, params[:language] )
+        content = Converter.new.convert_file( params[:action], body, params[:language] )
         content_type content.mime_type
         content
       rescue StandardError => e
@@ -175,7 +175,7 @@ module Colore
     # POST params:
     #  file      - the file to convert
     #  url       - a URL to convert
-    #  action    - the "format"
+    #  action    - the conversion to perform
     # 
     post "/#{LegacyConverter::LEGACY}/convert" do
       begin
@@ -204,7 +204,7 @@ module Colore
     # POST params:
     #  file       - the file to convert
     #  url        - a URL to convert
-    #  action     - the "format"
+    #  action     - the conversion to perform
     get "/#{LegacyConverter::LEGACY}/:file_id" do |file_id|
       begin
         content = LegacyConverter.new.get_file file_id

@@ -36,7 +36,7 @@ describe Colore::App do
       put "/document/#{appname}/#{new_doc_id}/#{filename}", {
           title: 'A title',
           file: Rack::Test::UploadedFile.new(__FILE__, 'application/ruby'),
-          formats: [ 'ocr', 'pdf' ],
+          actions: [ 'ocr', 'pdf' ],
           backtrace: true
       }
       show_backtrace last_response
@@ -51,7 +51,7 @@ describe Colore::App do
       put "/document/#{appname}/#{doc_id}/#{filename}", {
           title: 'A title',
           file: Rack::Test::UploadedFile.new(__FILE__, 'application/ruby'),
-          formats: [ 'ocr', 'pdf' ],
+          actions: [ 'ocr', 'pdf' ],
           backtrace: true
       }
       show_backtrace last_response
@@ -67,7 +67,7 @@ describe Colore::App do
       post "/document/#{appname}/#{doc_id}/#{filename}", {
           title: 'New title',
           file: Rack::Test::UploadedFile.new(__FILE__, 'application/ruby'),
-          formats: [ 'ocr', 'pdf' ],
+          actions: [ 'ocr', 'pdf' ],
           backtrace: true
       }
       show_backtrace last_response
@@ -83,7 +83,7 @@ describe Colore::App do
       post "/document/#{appname}/#{new_doc_id}/#{filename}", {
           title: 'New title',
           file: Rack::Test::UploadedFile.new(__FILE__, 'application/ruby'),
-          formats: [ 'ocr', 'pdf' ],
+          actions: [ 'ocr', 'pdf' ],
           backtrace: true
       }
       expect(last_response.status).to eq 400
@@ -93,10 +93,9 @@ describe Colore::App do
     end
   end
 
-  context 'POST new format' do
+  context 'POST new action' do
     it 'starts a new conversion' do
-      post "/document/#{appname}/#{doc_id}/current/#{filename}/format", {
-          formats: [ 'ocr', 'pdf' ],
+      post "/document/#{appname}/#{doc_id}/current/#{filename}/ocr", {
           backtrace: true
       }
       show_backtrace last_response
@@ -108,8 +107,7 @@ describe Colore::App do
       expect(Colore::Sidekiq::ConversionWorker).to have_received(:perform_async).once
     end
     it 'fails if invalid document' do
-      post "/document/#{appname}/#{invalid_doc_id}/current/#{filename}/format", {
-          formats: [ 'ocr', 'pdf' ],
+      post "/document/#{appname}/#{invalid_doc_id}/current/#{filename}/ocr", {
           backtrace: true
       }
       show_backtrace last_response
@@ -119,8 +117,7 @@ describe Colore::App do
       expect(Colore::Sidekiq::ConversionWorker).to_not have_received(:perform_async)
     end
     it 'fails if invalid version' do
-      post "/document/#{appname}/#{doc_id}/fred/#{filename}/format", {
-          formats: [ 'ocr', 'pdf' ],
+      post "/document/#{appname}/#{doc_id}/fred/#{filename}/ocr", {
           backtrace: true
       }
       show_backtrace last_response

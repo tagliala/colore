@@ -21,12 +21,12 @@ module Colore
     end
 
     # Converts the given file and stores it in the legacy directory
-    # @param format [String] the format to convert to
+    # @param action [String] the conversion to perform
     # @param orig_content [String] the body of the file to convert
     # @param language [String] the file's language
     # @return [String] the path to the converted file
-    def convert_file format, orig_content, language='en'
-      content = Heathen::Converter.new.convert(format, orig_content, language)
+    def convert_file action, orig_content, language='en'
+      content = Heathen::Converter.new.convert(action, orig_content, language)
       filename = Digest::SHA2.hexdigest content
       store_file filename, content
       (@legacy_dir.basename + filename).to_s

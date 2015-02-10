@@ -24,8 +24,8 @@ module Colore
   class VersionIsCurrent < Error
     def initialize; super 400, 'Version is current, change current version first'; end
   end
-  class InvalidFormat < Error
-    def initialize message=nil; super 400, (message||'Invalid format') ; end
+  class InvalidAction < Error
+    def initialize message=nil; super 400, (message||'Invalid action') ; end
   end
   class FileNotFound < Error
     def initialize; super 400, 'Requested file not found'; end

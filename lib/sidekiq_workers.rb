@@ -18,12 +18,12 @@ module Colore
       # @param doc_key_str [String] the serialised [DocKey]
       # @param version [String] the file version
       # @param filename [String] the file to convert
-      # @param format [String] the format to convert to
+      # @param action [String] the conversion to perform
       # @param callback_url [String] optional callback URL
-      def perform doc_key_str, version, filename, format, callback_url=nil
+      def perform doc_key_str, version, filename, action, callback_url=nil
         doc_key = DocKey.parse doc_key_str
-        new_filename = Converter.new.convert doc_key, version, filename, format
-        CallbackWorker.perform_async doc_key_str, version, format, new_filename, callback_url if callback_url
+        new_filename = Converter.new.convert doc_key, version, filename, action
+        CallbackWorker.perform_async doc_key_str, version, action, new_filename, callback_url if callback_url
       rescue Heathen::TaskNotFound => e
         logger.warn "#{e.message}, will not attempt to re-process this request"
       end
@@ -37,10 +37,10 @@ module Colore
       # Constructs a conversion response and POSTs it to the specified callback_url.
       # @param doc_key_str [String] the serialised [DocKey]
       # @param version [String] the file version
-      # @param format [String] the format converted to
+      # @param action [String] the conversion to perform
       # @param filename [String] the converted file name
       # @param callback_url [Stringoptional callback URL
-      def perform doc_key_str, version, format, new_filename, callback_url
+      def perform doc_key_str, version, action, new_filename, callback_url
         doc_key = DocKey.parse doc_key_str
         doc = Document.load C_.storage_directory, doc_key
         rsp_hash = {
@@ -49,7 +49,7 @@ module Colore
           app: doc_key.app,
           doc_id: doc_key.doc_id,
           version: version,
-          format: format,
+          action: action,
           path: doc.file_path(version,new_filename),
         }
         RestClient.post callback_url, JSON.pretty_generate(rsp_hash), content_type: :json
