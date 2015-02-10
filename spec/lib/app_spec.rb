@@ -65,7 +65,6 @@ describe Colore::App do
   context 'POST update document' do
     it 'runs' do
       post "/document/#{appname}/#{doc_id}/#{filename}", {
-          title: 'New title',
           file: Rack::Test::UploadedFile.new(__FILE__, 'application/ruby'),
           actions: [ 'ocr', 'pdf' ],
           backtrace: true
@@ -81,7 +80,6 @@ describe Colore::App do
 
     it 'fails if document does not exist' do
       post "/document/#{appname}/#{new_doc_id}/#{filename}", {
-          title: 'New title',
           file: Rack::Test::UploadedFile.new(__FILE__, 'application/ruby'),
           actions: [ 'ocr', 'pdf' ],
           backtrace: true
@@ -93,7 +91,25 @@ describe Colore::App do
     end
   end
 
-  context 'POST new action' do
+  context 'POST update title' do
+    it 'runs' do
+      title = "This is a new document"
+      post "/document/#{appname}/#{doc_id}/title/#{URI.escape(title)}"
+      expect(last_response.status).to eq 200
+      expect(last_response.content_type).to eq 'application/json'
+      expect(JSON.parse(last_response.body)).to be_a Hash
+    end
+
+    it 'fails if the document does not exist' do
+      title = "This is a new document"
+      post "/document/#{appname}/foobar/title/#{URI.escape(title)}"
+      expect(last_response.status).to eq 400
+      expect(last_response.content_type).to eq 'application/json'
+      expect(JSON.parse(last_response.body)).to be_a Hash
+    end
+  end
+
+  context 'POST new conversion' do
     it 'starts a new conversion' do
       post "/document/#{appname}/#{doc_id}/current/#{filename}/ocr", {
           backtrace: true

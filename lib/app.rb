@@ -35,6 +35,7 @@ module Colore
       begin
         doc_key = DocKey.new app,doc_id
         doc = Document.create @storage_dir, doc_key # will raise if doc exists
+        doc.title = params[:title] if params[:title]
         call env.merge( 'REQUEST_METHOD'=>'POST' )
       rescue StandardError => e
         respond e, e.message
@@ -42,10 +43,12 @@ module Colore
     end
 
     #
-    # Update document (will advance version and store document)
+    # Stores a new version of a given document. Side-effects - the
+    # current version is advanced and conversions are performed on the
+    # document if actions are specified (and callbacks will be sent if
+    # a callback_url is specified).
     #
     # POST params:
-    #   - title
     #   - actions
     #   - callback_url
     #   - file
@@ -53,7 +56,6 @@ module Colore
       begin
         doc_key = DocKey.new app,doc_id
         doc = Document.load( @storage_dir, doc_key )
-        doc.title = params[:title] if params[:title]
         if params[:file]
           version = doc.new_version
           doc.add_file version, filename, params[:file][:tempfile].read
@@ -74,6 +76,19 @@ module Colore
             doc_id: doc_id,
             path: doc.file_path( Document::CURRENT, filename ),
           }
+      rescue StandardError => e
+        respond e, e.message
+      end
+    end
+
+    # Updates the document title
+    post '/document/:app/:doc_id/title/:title' do |app,doc_id,title|
+      begin
+        doc_key = DocKey.new app,doc_id
+        doc = Document.load( @storage_dir, doc_key )
+        doc.title = title
+        doc.save_metadata
+        respond 200, 'Title updated'
       rescue StandardError => e
         respond e, e.message
       end
