@@ -114,9 +114,16 @@ module Colore
     end
 
     # Creates a new version, ready to store documents in
-    def new_version
-      nvn = next_version_number
-      Dir.mkdir directory + nvn
+    # Work is performed in a flock block to avoid concurrent race condition
+    def new_version &block
+      lockfile = directory + '.lock'
+      nvn = nil
+      lockfile.open 'w' do |f|
+        f.flock File::LOCK_EX # lock is auto-released at end of block
+        nvn = next_version_number
+        Dir.mkdir directory + nvn
+        yield nvn if block_given?
+      end
       nvn
     end
 

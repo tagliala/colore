@@ -7,7 +7,7 @@ module Colore
     end
   end
   class InvalidParameter < Error
-    def initialize; super 400, 'Invalid parameter'; end
+    def initialize param=nil; super 400, 'Invalid parameter #{param}'; end
   end
   class DocumentExists < Error
     def initialize; super 409, 'A document with this doc_id already exists'; end

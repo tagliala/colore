@@ -56,12 +56,12 @@ module Colore
       begin
         doc_key = DocKey.new app,doc_id
         doc = Document.load( @storage_dir, doc_key )
-        if params[:file]
-          version = doc.new_version
+        raise InvalidParameter.new :file unless params[:file]
+        version = doc.new_version do |version|
           doc.add_file version, filename, params[:file][:tempfile].read
           doc.set_current version
+          doc.save_metadata
         end
-        doc.save_metadata
         (params[:actions] || []).each do |action|
           Sidekiq::ConversionWorker.perform_async(
             doc_key.to_s,
@@ -74,7 +74,7 @@ module Colore
         respond 201, "Document stored", {
             app: app,
             doc_id: doc_id,
-            path: doc.file_path( Document::CURRENT, filename ),
+            path: doc.file_path( version, filename ),
           }
       rescue StandardError => e
         respond e, e.message
