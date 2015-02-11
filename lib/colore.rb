@@ -1,4 +1,3 @@
-require 'byebug'
 require_relative 'config'
 require_relative 'errors'
 require_relative 'utils'
