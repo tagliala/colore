@@ -13,7 +13,7 @@ module Heathen
         'pdf' => {
           '.*' => 'pdf',
         },
-        'ms' => {
+        'msoffice' => {
           'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
           'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'xlsx',
           'application/vnd.openxmlformats-officedocument.presentationml.presentation' => 'pptx',
@@ -22,7 +22,7 @@ module Heathen
           'application/vnd.oasis.opendocument.presentation' => 'pptx',
           'application/zip' => 'docx',
         },
-        'oo' => {
+        'ooffice' => {
           'application/msword' => 'odt',
           'application/vnd.ms-word' => 'odt',
           'application/vnd.ms-excel' => 'ods',

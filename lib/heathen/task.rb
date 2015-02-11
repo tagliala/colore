@@ -74,15 +74,15 @@ Heathen::Task.register 'pdf', '.*' do
   end
 end
 
-Heathen::Task.register 'microsoft', '.*' do
-  libreoffice 'ms'
+Heathen::Task.register 'msoffice', '.*' do
+  libreoffice format: 'msoffice'
 end
 
-Heathen::Task.register 'openoffice', '.*' do
-  libreoffice 'oo'
+Heathen::Task.register 'ooffice', '.*' do
+  libreoffice format: 'ooffice'
 end
 
 # support legacy method
 Heathen::Task.register 'doc', '.*' do
-  perform_task 'microsoft'
+  perform_task 'msoffice'
 end
