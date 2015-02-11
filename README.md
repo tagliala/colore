@@ -33,7 +33,7 @@ Error responses are always JSON, and have this format:
 
 ```json
     {
-      "status": {http error code},
+      "status": ERROR_CODE,
       "description": "A description of the error"
     }
 ```
@@ -244,7 +244,7 @@ Response:
             "content_type": "application/msword",
             "filename": "foo.docx",
             "path": "/document/myapp/12345/v001/foo.docx"
-          }
+          },
           "pdf": {
             "content_type": "application/pdf; charset=binary",
             "filename": "foo.pdf",
@@ -256,7 +256,7 @@ Response:
             "content_type": "application/msword",
             "filename": "foo.docx",
             "path": "/document/myapp/12345/v001/foo.docx"
-          }
+          },
           "txt": {
             "content_type": "text/plain; charset=us-ascii",
             "filename": "foo.txt",
