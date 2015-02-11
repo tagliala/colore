@@ -2,6 +2,7 @@
 # Sidekiq workers for the Colore system.
 #
 #
+require 'rest_client'
 require 'sidekiq'
 require 'sidetiq'
 
@@ -10,7 +11,7 @@ module Colore
     # This worker converts a document file to a new format and stores it.
     class ConversionWorker
       include ::Sidekiq::Worker
-      sidekiq_options queue: :colore, retry: 5, backtrace: true
+      sidekiq_options queue: :colore, retry: false
 
       # Converts a document file to a new format. The converted file will be stored in
       # the document version directory. If the callback_url is specified, the [CallbackWorker]
@@ -23,9 +24,18 @@ module Colore
       def perform doc_key_str, version, filename, action, callback_url=nil
         doc_key = DocKey.parse doc_key_str
         new_filename = Converter.new.convert doc_key, version, filename, action
-        CallbackWorker.perform_async doc_key_str, version, action, new_filename, callback_url if callback_url
+        status = 200
+        message = "Document converted"
       rescue Heathen::TaskNotFound => e
         logger.warn "#{e.message}, will not attempt to re-process this request"
+        status = 400
+        message = e.message
+      rescue StandardError => e
+        logger.warn "#{e.message}, will not attempt to re-process this request"
+        status = 500
+        message = e.message
+      ensure
+        CallbackWorker.perform_async doc_key_str, version, action, new_filename, callback_url, status, message if callback_url
       end
     end
 
@@ -39,20 +49,22 @@ module Colore
       # @param version [String] the file version
       # @param action [String] the conversion to perform
       # @param filename [String] the converted file name
-      # @param callback_url [Stringoptional callback URL
-      def perform doc_key_str, version, action, new_filename, callback_url
+      # @param callback_url [String] callback URL
+      # @param status [Integer) status code to send in callback
+      # @param message [String] description text to send in callback
+      def perform doc_key_str, version, action, new_filename, callback_url, status, description
         doc_key = DocKey.parse doc_key_str
         doc = Document.load C_.storage_directory, doc_key
         rsp_hash = {
-          status: 200,
-          description: "Document converted",
+          status: status.to_i,
+          description: description,
           app: doc_key.app,
           doc_id: doc_key.doc_id,
           version: version,
           action: action,
-          path: doc.file_path(version,new_filename),
+          path: (doc.file_path(version,new_filename) if status < 300),
         }
-        RestClient.post callback_url, JSON.pretty_generate(rsp_hash), content_type: :json
+        RestClient.post callback_url, rsp_hash
       end
     end
 
@@ -69,11 +81,12 @@ module Colore
 
       # Looks for old legacy docs and deletes them
       def perform
-        purge_seconds = (C_.legacy_purge_days || 1).to_i * 86400.0
-        LegacyConverter.new.legacy_dir.each_entry do |file|
-          next if file.directory?
-          if Time.now - file.ctime > purge_seconds
-            file.unlink
+        purge_seconds = (C_.legacy_purge_days || 1).to_f * 86400.0
+        dir = LegacyConverter.new.legacy_dir
+        dir.each_entry do |file|
+          next if (dir+file).directory?
+          if Time.now - (dir+file).ctime > purge_seconds
+            (dir+file).unlink
             logger.debug "Deleted old legacy file: #{file}"
           end
         end

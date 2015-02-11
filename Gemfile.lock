@@ -76,6 +76,7 @@ GEM
       eventmachine (~> 1.0)
       rack (~> 1.0)
     tilt (1.4.1)
+    timecop (0.7.1)
     timers (4.0.1)
       hitimes
     unicorn (4.3.1)
@@ -103,5 +104,6 @@ DEPENDENCIES
   simplecov
   sinatra
   thin
+  timecop
   unicorn
   wkhtmltopdf

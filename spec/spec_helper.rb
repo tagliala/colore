@@ -4,6 +4,7 @@ require 'logger'
 require 'byebug'
 require 'rack/test'
 require 'simplecov'
+require 'timecop'
 
 SimpleCov.start
 

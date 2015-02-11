@@ -271,3 +271,17 @@ Response:
       Content-Type: application/pdf; charset=binary
       
       ... PDF document body ...
+
+## Callbacks
+
+When a document conversion is completed, an attempt will be made to POST a callback to the URL specified when the conversion was attempted. The callback will be a normal form post, sending these values:
+
+    status - the result of the conversion, 200 for success, 400+ for failure
+    description - the outcome of the conversion, e.g. "Document converted"
+    app         - the application name
+    doc_id      - the ID of the document
+    version     - the version of the document that was converted
+    action      - the conversion action performed
+    path        - a path to the converted file (you will have to tack the Colore URL base onto this)
+
+
