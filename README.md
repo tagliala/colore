@@ -60,6 +60,7 @@ Request:
       actions[]=pdf
       actions[]=oo
 
+
 Response:
 
 ```json
@@ -80,7 +81,7 @@ This method will create a new version of an existing document and store the supp
 
 Params *(suggest using `multipart/form-data`)*:
 
-* `file`         - the uploaded file object (e.g. from `<input type="file"/>`)
+* `file`         - the uploaded file object *(e.g. from `<input type="file"/>`)*
 * `actions`      - an array of conversions to perform *(optional)*
 * `callback_url` - a URL that Colore will call when the conversions are completed *(optional)*
 
@@ -135,9 +136,9 @@ This method will request a new conversion be performed on a document version. Co
 
 Params *(suggest using multipart/form-data)*:
 
-* `version`      - the version to convert (e.g. 'v001', or 'current')
-* `action`       - the conversion to perform (e.g. pdf)
-* `callback_url` - a URL that Colore will call when the conversions are completed (optional)
+* `version`      - the version to convert *(e.g. `v001`, or `current`)*
+* `action`       - the conversion to perform *(e.g. pdf)*
+* `callback_url` - a URL that Colore will call when the conversions are completed *(optional)*
 
 #### Example:
 
@@ -275,8 +276,8 @@ This is a foreground document conversion request. The converted document will be
 Params *(suggest using `multipart/form-data`)*:
 
 * `file`      - the file to convert
-* `action`    - the conversion to perform *(e.g. 'pdf')*
-* `language`  - the file language *(defaults to 'en')*
+* `action`    - the conversion to perform *(e.g. `pdf`)*
+* `language`  - the file language *(defaults to `en`)*
 
 #### Example:
 
