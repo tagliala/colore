@@ -31,7 +31,7 @@ describe Colore::App do
     delete_storage
   end
 
-  context 'PUT update document' do
+  context 'PUT create document' do
     it 'creates a new document' do
       put "/document/#{appname}/#{new_doc_id}/#{filename}", {
           title: 'A title',
@@ -84,7 +84,7 @@ describe Colore::App do
           actions: [ 'ocr', 'pdf' ],
           backtrace: true
       }
-      expect(last_response.status).to eq 400
+      expect(last_response.status).to eq 404
       expect(last_response.content_type).to eq 'application/json'
       expect(JSON.parse(last_response.body)).to be_a Hash
       expect(Colore::Sidekiq::ConversionWorker).to_not have_received(:perform_async)
@@ -103,7 +103,7 @@ describe Colore::App do
     it 'fails if the document does not exist' do
       title = "This is a new document"
       post "/document/#{appname}/foobar/title/#{URI.escape(title)}"
-      expect(last_response.status).to eq 400
+      expect(last_response.status).to eq 404
       expect(last_response.content_type).to eq 'application/json'
       expect(JSON.parse(last_response.body)).to be_a Hash
     end
@@ -127,7 +127,7 @@ describe Colore::App do
           backtrace: true
       }
       show_backtrace last_response
-      expect(last_response.status).to eq 400
+      expect(last_response.status).to eq 404
       expect(last_response.content_type).to eq 'application/json'
       expect(JSON.parse(last_response.body)).to be_a Hash
       expect(Colore::Sidekiq::ConversionWorker).to_not have_received(:perform_async)
@@ -200,7 +200,7 @@ describe Colore::App do
     end
     it 'fails for an invalid document' do
       get "/document/#{appname}/#{invalid_doc_id}/current/#{filename}"
-      expect(last_response.status).to eq 400
+      expect(last_response.status).to eq 404
       expect(last_response.content_type).to eq 'application/json'
       expect(JSON.parse(last_response.body)).to be_a Hash
     end
@@ -222,7 +222,7 @@ describe Colore::App do
     end
     it 'fails for an invalid document' do
       get "/document/#{appname}/#{invalid_doc_id}"
-      expect(last_response.status).to eq 400
+      expect(last_response.status).to eq 404
       expect(last_response.content_type).to eq 'application/json'
       expect(JSON.parse(last_response.body)).to be_a Hash
     end

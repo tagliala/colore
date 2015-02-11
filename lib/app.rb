@@ -74,7 +74,7 @@ module Colore
         respond 201, "Document stored", {
             app: app,
             doc_id: doc_id,
-            path: doc.file_path( version, filename ),
+            path: doc.file_path( Colore::Document::CURRENT, filename ),
           }
       rescue StandardError => e
         respond e, e.message
