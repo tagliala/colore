@@ -9,26 +9,20 @@ There is no authentication baked into Colore itself. The expectation is that thi
 
 ## Directory structure
 
-All Colore documents are stored in subdirectories under a single "storage" directory, which is defined in configuration. Beneath the storage directory documents are divided up by application - the expectation is that each application will keep to its own space when working on documents, though this is not enforced.
+All Colore documents are stored in subdirectories under a single *storage* directory, which is defined in configuration. Beneath the storage directory documents are divided up by application - the expectation is that each application will keep to its own namespace when working on documents, though this is not enforced.
 
-Under the application directory, documents are organised by "doc_id", which is defined by the application when storing documents. The overall directory structure is like this:
+Under the application directory, documents are organised by `doc_id`, which is defined by the application when storing documents. The overall directory structure is like this:
 
-    {storage directory} - {app} - {doc_id} - metadata.json
-                                           |
-                                           - title
-                                           |
-                                           - current -> v002
-                                           |
-                                           - v001 - foo.docx
-                                           |      |
-                                           |      - foo.pdf
-                                           |
-                                           - v002 - foo.docx
-                                                  |
-                                                  - foo.jpg
+    {storage directory} - {app} - {doc_id} ┬─ metadata.json
+                                           ├─ title
+                                           ├─ current → v002
+                                           ├─ v001 ─┬─ foo.docx
+                                           │        └─ foo.pdf
+                                           └─ v002 ─┬─ foo.docx
+                                                    └─ foo.jpg
 
 
-As you can see, this document has two versions of foo.docx. The first version was converted to PDF and the second to an image. The current version is v002 - defined by the symlink "current". The metadata.json file is a JSON description of the directory structure.
+As you can see, this document has two versions of *foo.docx*. The first version was converted to PDF and the second to an image. The current version is *v002* - defined by the symlink *current*. The *metadata.json* file is a JSON description of the directory structure.
 
 API Definition
 --------------
@@ -37,10 +31,12 @@ This is a simple JSON API. Requests are submitted generally as POSTS with form d
 
 Error responses are always JSON, and have this format:
 
+```json
     {
       "status": {http error code},
       "description": "A description of the error"
     }
+```
 
 ### Create document
 
@@ -50,20 +46,23 @@ This method will create a new document, then perform the actions of Update docum
 
 Params: (suggest using multipart/form-data)
 
-* file         - the uploaded file object (e.g. from &gt;input type="file"/&lt;
-* title        - a description of the document (optional)
-* actions      - an array of conversions to perform (optional)
-* callback_url - a URL that Colore will call when the conversions are completed (optional)
+* `file`         - the uploaded file object (e.g. from `<input type="file"/>`)
+* `title`        - a description of the document *(optional)*
+* `actions`      - an array of conversions to perform *(optional)*
+* `callback_url` - a URL that Colore will call when the conversions are completed *(optional)*
 
 #### Example:
+
 Request:
 
     PUT /document/myapp/12345/foo.docx
       title=A test document
-      actions=["pdf","oo"]
+      actions[]=pdf
+      actions[]=oo
 
 Response:
 
+```json
     {
       "status": 201,
       "description": "Document stored",
@@ -71,34 +70,39 @@ Response:
       "doc_id": "12345",
       "path": "/documents/myapp/12345/current/foo.docx"
     }
+```
 
 ### Update document
 
-This method will create a new version of an existing document and store the supplied file. If conversion actions are specified, these conversions will be scheduled to be performed asynchronously, and will POST to the optional callback_url when each is completed.
+This method will create a new version of an existing document and store the supplied file. If conversion actions are specified, these conversions will be scheduled to be performed asynchronously, and will `POST` to the optional `callback_url` when each is completed.
 
     POST /document/:app/:doc_id/:filename
 
-Params: (suggest using multipart/form-data)
+Params *(suggest using `multipart/form-data`)*:
 
-* file         - the uploaded file object (e.g. from &gt;input type="file"/&lt;
-* actions      - an array of conversions to perform (optional)
-* callback_url - a URL that Colore will call when the conversions are completed (optional)
+* `file`         - the uploaded file object (e.g. from `<input type="file"/>`)
+* `actions`      - an array of conversions to perform *(optional)*
+* `callback_url` - a URL that Colore will call when the conversions are completed *(optional)*
 
 #### Example:
+
 Request:
 
     POST /document/myapp/12345/foo.docx
-      actions=["pdf","oo"]
+    actions[]=pdf
+    actions[]=ooffice
 
 Response:
 
+```json
     {
       "status": 201,
       "description": "Document stored",
-      "app": "mapp",
+      "app": "myapp",
       "doc_id": "12345",
       "path": "/documents/myapp/12345/current/foo.docx"
     }
+```
 
 ### Update document title
 
@@ -109,16 +113,19 @@ This method will change the document's title.
 The `:title` must be URL-encoded.
 
 #### Example:
+
 Request:
 
     POST /document/myapp/12345/title/This%20is%20a%20new%20title
 
 Response:
 
+```json
     {
       "status": 200,
       "description": "Title changed",
     }
+```
 
 ### Request new conversion
 
@@ -126,23 +133,26 @@ This method will request a new conversion be performed on a document version. Co
 
     POST /document/:app/:doc_id/:version/:filename/:action
 
-Params: (suggest using multipart/form-data)
+Params *(suggest using multipart/form-data)*:
 
-* version      - the version to convert (e.g. 'v001', or 'current')
-* action       - the conversion to perform (e.g. pdf)
-* callback_url - a URL that Colore will call when the conversions are completed (optional)
+* `version`      - the version to convert (e.g. 'v001', or 'current')
+* `action`       - the conversion to perform (e.g. pdf)
+* `callback_url` - a URL that Colore will call when the conversions are completed (optional)
 
 #### Example:
+
 Request:
 
     POST /document/myapp/12345/current/foo.docx/pdf
 
 Response:
 
+```json
     {
       "status": 202,
       "description": "Conversion initiated"
     }
+```
 
 ### Delete document
 
@@ -150,19 +160,22 @@ This method will completely delete a document.
 
     DELETE /document/:app/:doc_id
 
-There are no parameters
+There are no parameters.
 
 #### Example:
+
 Request:
 
     DELETE /document/myapp/12345
 
 Response:
 
+```json
     {
       "status": 200,
       "description": "Document deleted"
     }
+```
 
 ### Delete document version
 
@@ -171,16 +184,19 @@ This method will delete just one version of a document. It is not possible to de
     DELETE /document/:app/:doc_id/:version
 
 #### Example:
+
 Request:
 
     DELETE /document/myapp/12345/v001
 
 Response:
 
+```json
     {
       "status": 200,
       "description": "Document version deleted"
     }
+```
 
 ### Get file
 
@@ -189,6 +205,7 @@ This method will retrieve a document file, returning it as the response body. Th
     GET /document/:app/:doc_id/:version/:filename
 
 #### Example:
+
 Request:
 
     GET /document/myapp/12345/v001/foo.pdf
@@ -196,7 +213,7 @@ Request:
 Response:
 
     Content-Type: application/pdf; charset=binary
-    
+
     ... document body ...
 
 ### Get document info
@@ -212,6 +229,7 @@ Request:
 
 Response:
 
+```json
     {
       "status": 200,
       "description": "Information retrieved",
@@ -232,7 +250,7 @@ Response:
             "path": "/document/myapp/12345/v001/foo.pdf"
           }
         },
-        "v001": {
+        "v002": {
           "docx": {
             "content_type": "application/msword",
             "filename": "foo.docx",
@@ -246,6 +264,7 @@ Response:
         }
       }
     }
+```
 
 ### Convert document
 
@@ -253,11 +272,11 @@ This is a foreground document conversion request. The converted document will be
 
     POST /convert
 
-Params: (suggest using multipart/form-data)
+Params *(suggest using `multipart/form-data`)*:
 
-* file      - the file to convert
-* action    - the conversion to perform (e.g. 'pdf')
-* language  - the file language (defaults to 'en')
+* `file`      - the file to convert
+* `action`    - the conversion to perform *(e.g. 'pdf')*
+* `language`  - the file language *(defaults to 'en')*
 
 #### Example:
 
@@ -267,21 +286,38 @@ Params: (suggest using multipart/form-data)
       language=en
 
 Response:
- 
+
       Content-Type: application/pdf; charset=binary
-      
+
       ... PDF document body ...
 
 ## Callbacks
 
 When a document conversion is completed, an attempt will be made to POST a callback to the URL specified when the conversion was attempted. The callback will be a normal form post, sending these values:
 
-    status - the result of the conversion, 200 for success, 400+ for failure
-    description - the outcome of the conversion, e.g. "Document converted"
-    app         - the application name
-    doc_id      - the ID of the document
-    version     - the version of the document that was converted
-    action      - the conversion action performed
-    path        - a path to the converted file (you will have to tack the Colore URL base onto this)
+* `status`      - the result of the conversion, `200` for success, `400+` for failure
+* `description` - the outcome of the conversion, e.g. *Document converted*
+* `app`         - the application name
+* `doc_id`      - the ID of the document
+* `version`     - the version of the document that was converted
+* `action`      - the conversion action performed
+* `path`        - a path to the converted file. You will have to tack the Colore URL base onto this
 
+## Contributing
 
+Want to contribute? Great!
+
+1. Fork it.
+2. Create a branch (`git checkout -b my_great_patch`)
+3. Commit your changes (`git commit -am "Added Awesome Stuff"`)
+4. Push to the branch (`git push origin my_great_patch`)
+5. Open a [Pull Request](https://github.com/ifad/colore/pulls)
+6. Enjoy
+
+## Authors
+
+* Joe Blackman -- <j.blackman@ifad.org>
+
+## License
+
+MIT
