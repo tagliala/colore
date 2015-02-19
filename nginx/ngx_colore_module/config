@@ -1,0 +1,5 @@
+ngx_addon_name=ngx_colore_module
+HTTP_MODULES="$HTTP_MODULES ngx_colore_module"
+NGX_ADDON_SRCS="$NGX_ADDON_SRCS $ngx_addon_dir/ngx_colore_module.c"
+
+have=NDK_SET_VAR . auto/have
