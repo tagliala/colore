@@ -1,7 +1,8 @@
 Colore
 ======
 
-Colore is a document storage, versioning and conversion system. Documents are stored on the filesystem, in a defined directory structure. Access to these documents is via API. Colore is intended to sit behind a proxying web server (e.g. Nginx), which can be used to directly access the documents, rather than putting that access load on Colore itself.
+[![Build Status](https://travis-ci.org/ifad/colore.svg)](https://travis-ci.org/ifad/colore)
+
 
 ## Authentication
 
