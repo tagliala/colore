@@ -226,8 +226,11 @@ Response:
 ### Get file
 
 This method will retrieve a document file, returning it as the response body.
-This method is really only meant for testing purposes, as in a live
-environment you would expect this to be performed by the proxying web server.
+This method is really only meant for testing purposes, and it is disabled if
+the `RACK_ENV` variable is set to `production`. In a live environment this is
+expected to be performed by the proxying web server. See the [example nginx
+configuration](https://github.com/ifad/colore/blob/master/nginx/colore.nginx.conf)
+for details.
 
     GET /document/:app/:doc_id/:version/:filename
 

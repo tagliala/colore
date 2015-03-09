@@ -141,7 +141,7 @@ module Colore
     end
 
     #
-    # Get file
+    # Get file. Disabled in production.
     #
     get '/document/:app/:doc_id/:version/:filename' do |app, doc_id, version, filename|
       begin
@@ -152,7 +152,7 @@ module Colore
       rescue StandardError => e
         respond e, e.message
       end
-    end
+    end unless environment == :production
 
     #
     # Get document info
