@@ -2,6 +2,9 @@ Colore
 ======
 
 [![Build Status](https://travis-ci.org/ifad/colore.svg)](https://travis-ci.org/ifad/colore)
+[![Inline docs](http://inch-ci.org/github/ifad/colore.svg?branch=master)](http://inch-ci.org/github/ifad/colore)
+
+![Color Wheel](http://upload.wikimedia.org/wikipedia/commons/thumb/3/38/BYR_color_wheel.svg/480px-BYR_color_wheel.svg.png)
 
 Colore is a document storage, versioning and conversion system. Documents are
 stored on the filesystem, in a defined directory structure. Access to these

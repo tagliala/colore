@@ -50,8 +50,8 @@ module AutoHeathen
     end
 
     # Processes the given email, submits attachments to the Heathen server, delivers responses as configured
-    # @param input A string containing the encoded email (suitable to be decoded using Mail.read(input)
-    # @return a hash of the decoded attachments (or the reason why they could not be decoded)
+    # @param email [String] The encoded email (suitable to be decoded using Mail.read(input))
+    # @return [Hash] a hash of the decoded attachments (or the reason why they could not be decoded)
     def process email, mail_to, is_rts=false
       documents = []
 
@@ -117,7 +117,7 @@ module AutoHeathen
       good_headers = ONWARD_HEADERS.map{ |h| h.downcase }
       inspect_headers = email.header.map(&:name)
       inspect_headers .each do |name|
-        unless good_headers.include? name.downcase 
+        unless good_headers.include? name.downcase
           email.header[name] = nil
         end
       end

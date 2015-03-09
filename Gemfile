@@ -16,6 +16,7 @@ gem 'mail'
 
 gem 'rake'
 gem 'rspec'
+gem 'yard'
 gem 'rack-test'
 gem 'simplecov'
 gem 'byebug'

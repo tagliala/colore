@@ -7,14 +7,14 @@ module Colore
   # This is a representation of the document stored on disk. Each doc is stored
   # in its own directory, which has this structure:
   #
-  #   - doc_id  - metadata.json
-  #             - title
-  #             - current -> v002
-  #             - v001  - foo.docx
-  #                     - foo.pdf
-  #             - v002  - foo.docx
-  #                     - foo.pdf
-  #                     - foo.txt
+  #     (doc_id) ┬─ metadata.json
+  #              ├─ title
+  #              ├─ current → v002
+  #              ├─ v001 ─┬─ foo.docx
+  #              │        └─ foo.pdf
+  #              └─ v002 ─┬─ foo.docx
+  #                       └─ foo.jpg
+  #
   class Document
     attr_reader :base_dir
     attr_reader :doc_key
@@ -60,7 +60,7 @@ module Colore
     # Deletes the document directory (and all contents) if it exists.
     # @param base_dir [String] The base path to the storage area
     # @param doc_key [DocKey] The document identifier
-    # @returns nothing important.
+    # @return [void].
     def self.delete base_dir, doc_key
       return unless exists? base_dir, doc_key
       FileUtils.rm_rf directory( base_dir, doc_key )
@@ -74,12 +74,12 @@ module Colore
       @doc_key = doc_key
     end
 
-    # @returns the document storage directory.
+    # @return the document storage directory.
     def directory
       self.class.directory @base_dir, @doc_key
     end
 
-    # @returns the document title.
+    # @return the document title.
     def title
       return '' unless File.exist?( directory + 'title' )
       File.read( directory + 'title' ).chomp
@@ -131,7 +131,7 @@ module Colore
     # @param version [String] the version identifier (can be 'current')
     # @param filename [String] the name of the file
     # @param body [String] the file contents (binary string)
-    # @returns nothing important
+    # @return [void]
     def add_file version, filename, body
       raise VersionNotFound.new unless File.exist?( directory + version )
       File.open( directory + version + filename, "wb" ) { |f| f.write body }
@@ -202,8 +202,8 @@ module Colore
       }
     end
 
-    # Saves the document metadata to {doc-dir}/metadata.json
-    # This metadata is just the [#to_hash], as JSON, and is intended for access by client
+    # Saves the document metadata to (doc-dir)/metadata.json
+    # This metadata is just the {#to_hash}, as JSON, and is intended for access by client
     # applications. It is not used by Colore for anything.
     def save_metadata
       File.open( directory + 'metadata.json', "w" ) do |f|

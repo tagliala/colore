@@ -48,10 +48,10 @@ module Colore
       # @param doc_key_str [String] the serialised [DocKey]
       # @param version [String] the file version
       # @param action [String] the conversion to perform
-      # @param filename [String] the converted file name
+      # @param new_filename [String] the converted file name
       # @param callback_url [String] callback URL
       # @param status [Integer) status code to send in callback
-      # @param message [String] description text to send in callback
+      # @param description [String] description text to send in callback
       def perform doc_key_str, version, action, new_filename, callback_url, status, description
         doc_key = DocKey.parse doc_key_str
         doc = Document.load C_.storage_directory, doc_key

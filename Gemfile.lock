@@ -85,6 +85,7 @@ GEM
       rack
       raindrops (~> 0.7)
     wkhtmltopdf (0.1.2)
+    yard (0.8.7.6)
 
 PLATFORMS
   ruby
@@ -109,3 +110,4 @@ DEPENDENCIES
   timecop
   unicorn
   wkhtmltopdf
+  yard
