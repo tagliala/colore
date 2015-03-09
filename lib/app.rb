@@ -191,7 +191,7 @@ module Colore
     #  file      - the file to convert
     #  url       - a URL to convert
     #  action    - the conversion to perform
-    # 
+    #
     post "/#{LegacyConverter::LEGACY}/convert" do
       begin
         body = if params[:file]
