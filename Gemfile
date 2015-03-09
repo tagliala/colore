@@ -14,6 +14,7 @@ gem 'sidetiq'
 gem 'rest-client'
 gem 'mail'
 
+gem 'rake'
 gem 'rspec'
 gem 'rack-test'
 gem 'simplecov'
