@@ -1,7 +1,7 @@
 module Heathen
   class Processor
     # Converts an image to a different image format. This is done by running the 'convert'
-    # utility from FileMagic. Sets the job content to the new format.
+    # utility from ImageMagick. Sets the job content to the new format.
     # @param to [String] the format to convert to (suffix)
     # @params params [Array] optional parameters to pass to the convert program.
     def convert_image to: 'tiff', params: nil

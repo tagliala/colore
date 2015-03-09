@@ -10,7 +10,7 @@ describe Heathen::Processor do
 
   def new_job content
     @job = Heathen::Job.new 'foo', content, 'en'
-    @processor = described_class.new job: @job, logger: Logger.new(nil)
+    @processor = described_class.new job: @job, logger: Logger.new($stderr)
   end
 
   after do
