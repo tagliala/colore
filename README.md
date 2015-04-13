@@ -35,14 +35,17 @@ structure is like this:
                                            ├─ current → v002
                                            ├─ v001 ─┬─ foo.docx
                                            │        └─ foo.pdf
+                                           │        └─ _author.txt
                                            └─ v002 ─┬─ foo.docx
                                                     └─ foo.jpg
+                                                    └─ _author.txt
 
 
 As you can see, this document has two versions of *foo.docx*. The first
 version was converted to PDF and the second to an image. The current version
 is *v002* - defined by the symlink *current*. The *metadata.json* file is a
-JSON description of the directory structure.
+JSON description of the directory structure. The file *_author.txt* holds
+the name of the author of the document version.
 
 API Definition
 --------------
@@ -71,6 +74,7 @@ Params: (suggest using multipart/form-data)
 
 * `file`         - the uploaded file object (e.g. from `<input type="file"/>`)
 * `title`        - a description of the document *(optional)*
+* `author`       - the document author *(optional)*
 * `actions`      - an array of conversions to perform *(optional)*
 * `callback_url` - a URL that Colore will call when the conversions are completed *(optional)*
 
@@ -80,6 +84,7 @@ Request:
 
     PUT /document/myapp/12345/foo.docx
       title=A test document
+      author=mr.spliffy
       actions[]=pdf
       actions[]=oo
 
@@ -108,6 +113,7 @@ scheduled to be performed asynchronously, and will `POST` to the optional
 Params *(suggest using `multipart/form-data`)*:
 
 * `file`         - the uploaded file object *(e.g. from `<input type="file"/>`)*
+* `author`       - the new file's author *(optional)*
 * `actions`      - an array of conversions to perform *(optional)*
 * `callback_url` - a URL that Colore will call when the conversions are completed *(optional)*
 
@@ -116,6 +122,7 @@ Params *(suggest using `multipart/form-data`)*:
 Request:
 
     POST /document/myapp/12345/foo.docx
+    author=mr.spliffy
     actions[]=pdf
     actions[]=ooffice
 
@@ -277,24 +284,32 @@ Response:
       "docx": {
         "content_type": "application/msword",
         "filename": "foo.docx",
-        "path": "/document/myapp/12345/v001/foo.docx"
+        "path": "/document/myapp/12345/v001/foo.docx",
+        "author": "mrspliffy"
+        "created_at": ""2015-04-13 13:26:41 +0100"
       },
       "pdf": {
         "content_type": "application/pdf; charset=binary",
         "filename": "foo.pdf",
-        "path": "/document/myapp/12345/v001/foo.pdf"
+        "path": "/document/myapp/12345/v001/foo.pdf",
+        "author": "mrspliffy"
+        "created_at": ""2015-04-13 13:26:41 +0100"
       }
     },
     "v002": {
       "docx": {
         "content_type": "application/msword",
         "filename": "foo.docx",
-        "path": "/document/myapp/12345/v001/foo.docx"
+        "path": "/document/myapp/12345/v001/foo.docx",
+        "author": "mrspliffy"
+        "created_at": ""2015-04-13 13:26:41 +0100"
       },
       "txt": {
         "content_type": "text/plain; charset=us-ascii",
         "filename": "foo.txt",
-        "path": "/document/myapp/12345/v001/foo.txt"
+        "path": "/document/myapp/12345/v001/foo.txt",
+        "author": "mrspliffy"
+        "created_at": ""2015-04-13 13:26:41 +0100"
       }
     }
   }
