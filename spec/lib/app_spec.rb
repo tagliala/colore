@@ -10,6 +10,7 @@ describe Colore::App do
   let(:new_doc_id) { '54321' }
   let(:invalid_doc_id) { 'foobar' }
   let(:storage_dir) { tmp_storage_dir }
+  let(:author) { 'spliffy' }
 
   def show_backtrace response
     if response.status == 500
@@ -37,6 +38,7 @@ describe Colore::App do
           title: 'A title',
           file: Rack::Test::UploadedFile.new(__FILE__, 'application/ruby'),
           actions: [ 'ocr', 'pdf' ],
+          author: author,
           backtrace: true
       }
       show_backtrace last_response
@@ -82,6 +84,7 @@ describe Colore::App do
       post "/document/#{appname}/#{new_doc_id}/#{filename}", {
           file: Rack::Test::UploadedFile.new(__FILE__, 'application/ruby'),
           actions: [ 'ocr', 'pdf' ],
+          author: author,
           backtrace: true
       }
       expect(last_response.status).to eq 404

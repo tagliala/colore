@@ -31,6 +31,7 @@ module Colore
     #   - actions
     #   - callback_url
     #   - file
+    #   - author
     put '/document/:app/:doc_id/:filename' do |app,doc_id,filename|
       begin
         doc_key = DocKey.new app,doc_id
@@ -52,13 +53,14 @@ module Colore
     #   - actions
     #   - callback_url
     #   - file
+    #   - author
     post '/document/:app/:doc_id/:filename' do |app,doc_id,filename|
       begin
         doc_key = DocKey.new app,doc_id
         doc = Document.load( @storage_dir, doc_key )
         raise InvalidParameter.new :file unless params[:file]
         version = doc.new_version do |version|
-          doc.add_file version, filename, params[:file][:tempfile].read
+          doc.add_file version, filename, params[:file][:tempfile].read, params[:author]
           doc.set_current version
           doc.save_metadata
         end

@@ -20,6 +20,7 @@ module Colore
     attr_reader :doc_key
 
     CURRENT = 'current'
+    AUTHOR_FILE = '_author.txt'
 
     # Returns document directory path
     # @param base_dir [String] The base path to the storage area
@@ -131,10 +132,12 @@ module Colore
     # @param version [String] the version identifier (can be 'current')
     # @param filename [String] the name of the file
     # @param body [String] the file contents (binary string)
+    # @param author [String] the author of the file (optional)
     # @return [void]
-    def add_file version, filename, body
+    def add_file version, filename, body, author=nil
       raise VersionNotFound.new unless File.exist?( directory + version )
       File.open( directory + version + filename, "wb" ) { |f| f.write body }
+      File.open( directory + version + AUTHOR_FILE, 'w' ) { |f| f.write author }
     end
 
     # Sets the specified version as current.
@@ -183,13 +186,18 @@ module Colore
       versions.each do |v|
         v_list[v] = {}
         Dir.glob(directory + v + '*').each do |file|
-          content_type = File.read(file,200).mime_type
-          suffix = File.extname(file).gsub( /\./, '')
+          pfile = Pathname.new(file)
+          next if pfile.basename.to_s == AUTHOR_FILE
+          content_type = File.read(pfile,200).mime_type
+          author = File.read( pfile.parent + AUTHOR_FILE ).chomp rescue nil
+          suffix = pfile.extname.gsub( /\./, '')
           next if suffix.empty?
           v_list[v][suffix] = {
             content_type: content_type,
-            filename: File.basename(file),
-            path: file_path(v,File.basename(file)),
+            filename: pfile.basename.to_s,
+            path: file_path(v,pfile.basename),
+            author: author,
+            created_at: pfile.mtime,
           }
         end
       end

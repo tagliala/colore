@@ -8,6 +8,7 @@ describe Colore::Document do
   let(:invalid_doc_key) { Colore::DocKey.new(app,'bollox') }
   let(:storage_dir) { tmp_storage_dir }
   let(:document) { described_class.load storage_dir, doc_key }
+  let(:author) { 'spliffy' }
 
   before do
     setup_storage
@@ -137,11 +138,19 @@ describe Colore::Document do
   end
 
   context '#add_file' do
-    it 'runs' do
+    it 'runs without author' do
       file = __FILE__
       body = File.read(file)
       document.add_file 'v002', File.basename(file), body
       expect(File.exists? document.directory + 'v002' + File.basename(file)).to eq true
+    end
+    it 'runs with author' do
+      file = __FILE__
+      body = File.read(file)
+      document.add_file 'v002', File.basename(file), body, author
+      expect(File.exists? document.directory + 'v002' + File.basename(file)).to eq true
+      expect(File.exists? document.directory + 'v002' + described_class::AUTHOR_FILE).to eq true
+      expect(File.read( document.directory + 'v002' + described_class::AUTHOR_FILE).chomp ).to eq author
     end
   end
 
@@ -217,9 +226,13 @@ describe Colore::Document do
 
   context '#to_hash' do
     it 'runs' do
-      dochash = JSON.parse( File.read(fixture('document.json')) )
-      dochash = Colore::Utils.symbolize_keys dochash
-      expect(Colore::Utils.symbolize_keys document.to_hash).to match dochash
+      testhash = JSON.parse( File.read(fixture('document.json')) )
+      testhash = Colore::Utils.symbolize_keys testhash
+      dochash = Colore::Utils.symbolize_keys document.to_hash
+      dochash[:versions].each do |k,v|
+        v.each { |k1, v1| v1.delete :created_at }
+      end
+      expect(dochash).to match testhash
     end
   end
 
