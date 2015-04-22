@@ -34,10 +34,10 @@ structure is like this:
                                            ├─ title
                                            ├─ current → v002
                                            ├─ v001 ─┬─ foo.docx
-                                           │        └─ foo.pdf
+                                           │        ├─ foo.pdf
                                            │        └─ _author.txt
                                            └─ v002 ─┬─ foo.docx
-                                                    └─ foo.jpg
+                                                    ├─ foo.jpg
                                                     └─ _author.txt
 
 
