@@ -85,4 +85,9 @@ describe AutoHeathen::EmailProcessor do
     expect{processor.get_action 'foobar'}.to raise_error(RuntimeError)
   end
 
+  it 'handles null subject' do
+    expect(processor).to receive(:deliver)
+    email.subject = nil
+    processor.process email, 'bob@bob.foober'
+  end
 end
