@@ -15,3 +15,6 @@ legacy_purge_days: 2
 # Sidekiq configuration settings - which redis to use and namespace
 redis_url: redis://localhost:6379/4
 redis_namespace: colore
+
+# If set, will run this executable, rather than looking for a ruby gem
+wkhtmltopdf_path: /usr/local/bin/wkhtmltopdf

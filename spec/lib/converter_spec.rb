@@ -13,6 +13,7 @@ describe Colore::Converter do
   before do
     setup_storage
     allow(Colore::C_).to receive(:storage_directory) { tmp_storage_dir }
+    allow(Colore::C_).to receive(:wkhtmltopdf_path) { '/usr/local/bin/wkhtmltopdf' }
   end
 
   after do

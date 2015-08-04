@@ -21,6 +21,8 @@ module Colore
     attr_accessor :redis_url
     # Redis namespace (used by sidekiq)
     attr_accessor :redis_namespace
+    # Path to the wkhtmltopdf binary
+    attr_accessor :wkhtmltopdf_path
 
     def self.config_file_path
       # BASE/config/app.yml
@@ -36,6 +38,7 @@ module Colore
         c.legacy_purge_days = yaml['legacy_purge_days'].to_i
         c.redis_url = yaml['redis_url']
         c.redis_namespace = yaml['redis_namespace']
+        c.wkhtmltopdf_path = yaml['wkhtmltopdf_path']
         c
       end
     end

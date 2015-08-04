@@ -4,8 +4,9 @@ module Heathen
       expect_mime_type 'text/html'
 
       target_file = temp_file_name
+      wkhtmltopdf = Colore::C_.wkhtmltopdf_path || 'wkhtmltopdf'
       executioner.execute(
-        *['wkhtmltopdf',
+        *[wkhtmltopdf,
         params.split(/ +/),
         job.content_file('.html'),
         target_file,
