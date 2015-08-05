@@ -60,7 +60,7 @@ module Colore
         doc = Document.load( @storage_dir, doc_key )
         raise InvalidParameter.new :file unless params[:file]
         version = doc.new_version do |version|
-          doc.add_file version, filename, params[:file][:tempfile].read, params[:author]
+          doc.add_file version, filename, params[:file][:tempfile], params[:author]
           doc.set_current version
           doc.save_metadata
         end

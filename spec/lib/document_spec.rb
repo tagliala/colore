@@ -152,6 +152,12 @@ describe Colore::Document do
       expect(File.exists? document.directory + 'v002' + described_class::AUTHOR_FILE).to eq true
       expect(File.read( document.directory + 'v002' + described_class::AUTHOR_FILE).chomp ).to eq author
     end
+    it 'runs with IO for body' do
+      file = __FILE__
+      body = File.open(file)
+      document.add_file 'v002', File.basename(file), body
+      expect(File.exists? document.directory + 'v002' + File.basename(file)).to eq true
+    end
   end
 
   context '#set_current' do

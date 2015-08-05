@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Heathen::Processor do
   let(:content) { File.read(fixture('heathen/quickfox.jpg')) }
   let(:job) { Heathen::Job.new 'foo', content, 'en' }
-  let(:processor) { described_class.new job: job, logger: Logger.new($stderr) }
+  let(:processor) { described_class.new job: job, logger: spec_logger }
 
   after do
     processor.clean_up

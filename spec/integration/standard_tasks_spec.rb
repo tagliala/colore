@@ -10,7 +10,7 @@ describe 'Standard Heathen tasks:' do
     delete_storage
   end
 
-  let(:converter) { Heathen::Converter.new(logger: Logger.new($stderr)) }
+  let(:converter) { Heathen::Converter.new(logger: spec_logger) }
 
   context 'ocr' do
     it 'runs' do

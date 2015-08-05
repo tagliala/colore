@@ -1,4 +1,5 @@
 require 'pathname'
+require 'stringio'
 require 'json'
 require 'filemagic/ext'
 require_relative 'doc_key'
@@ -131,12 +132,13 @@ module Colore
     # Adds the given file under the specified version.
     # @param version [String] the version identifier (can be 'current')
     # @param filename [String] the name of the file
-    # @param body [String] the file contents (binary string)
+    # @param body [String or IO] the file contents (binary string or IO)
     # @param author [String] the author of the file (optional)
     # @return [void]
     def add_file version, filename, body, author=nil
       raise VersionNotFound.new unless File.exist?( directory + version )
-      File.open( directory + version + filename, "wb" ) { |f| f.write body }
+      body = StringIO.new(body) unless body.respond_to?(:read) # string -> IO
+      File.open( directory + version + filename, "wb" ) { |f| IO.copy_stream(body,f) }
       File.open( directory + version + AUTHOR_FILE, 'w' ) { |f| f.write author }
     end
 
