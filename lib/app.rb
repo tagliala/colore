@@ -14,6 +14,7 @@ module Colore
     before do
       @storage_dir = Pathname.new( C_.storage_directory )
       @legacy_url_base = C_.legacy_url_base || url('/')
+      @logger = Logger.new(STDOUT)
     end
 
     #
@@ -178,7 +179,7 @@ module Colore
     post '/convert' do
       begin
         body = params[:file][:tempfile].read
-        content = Converter.new.convert_file( params[:action], body, params[:language] )
+        content = Converter.new(logger:@logger).convert_file( params[:action], body, params[:language] )
         content_type content.mime_type
         content
       rescue StandardError => e
