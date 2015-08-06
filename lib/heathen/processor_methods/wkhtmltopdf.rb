@@ -24,14 +24,6 @@ module Heathen
 
     def _wkhtmltopdf_options(content)
       html = Nokogiri.parse(content)
-      defl = [
-        '--page-size',     'Letter',
-        '--margin-top',    '0.75in',
-        '--margin-right',  '0.75in',
-        '--margin-bottom', '0.75in',
-        '--margin-left',   '0.75in',
-        '--encoding',      'UTF-8'
-      ]
 
       attrs = html.xpath("//meta[starts-with(@name, 'colore')]").inject({}) do |h, meta|
         name  = meta.attributes['name'].value.sub(/^colore/, '-')
@@ -44,7 +36,7 @@ module Heathen
         h.merge(name => value)
       end
 
-      attrs.inject(defl){ |d, (k,v)| d << [k, v] }.flatten.compact
+      attrs.inject([]){ |d, (k,v)| d << [k, v] }.flatten.compact
     end
   end
 end

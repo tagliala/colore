@@ -70,7 +70,7 @@ Heathen::Task.register 'pdf', '.*' do
     when %r[image/*]
       perform_task 'ocr'
     when %r[text/html]
-      wkhtmltopdf '-d 100'
+      wkhtmltopdf '-d 100 --encoding UTF-8'
     else
       libreoffice format: 'pdf'
   end
