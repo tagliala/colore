@@ -1,3 +1,5 @@
+require 'nokogiri'
+
 module Heathen
   class Processor
     def wkhtmltopdf params=''
@@ -7,6 +9,7 @@ module Heathen
       wkhtmltopdf = Colore::C_.wkhtmltopdf_path || 'wkhtmltopdf'
       executioner.execute(
         *[wkhtmltopdf,
+        _wkhtmltopdf_options(job.content),
         params.split(/ +/),
         job.content_file('.html'),
         target_file,
@@ -15,6 +18,33 @@ module Heathen
       raise ConversionFailed.new(executioner.last_messages) if executioner.last_exit_status != 0
       job.content = File.read(target_file)
       File.unlink(target_file)
+    end
+
+    protected
+
+    def _wkhtmltopdf_options(content)
+      html = Nokogiri.parse(content)
+      defl = [
+        '--page-size',     'Letter',
+        '--margin-top',    '0.75in',
+        '--margin-right',  '0.75in',
+        '--margin-bottom', '0.75in',
+        '--margin-left',   '0.75in',
+        '--encoding',      'UTF-8'
+      ]
+
+      attrs = html.xpath("//meta[starts-with(@name, 'colore')]").inject({}) do |h, meta|
+        name  = meta.attributes['name'].value.sub(/^colore/, '-')
+        value = if meta.attributes.key?('content')
+          unless (v = meta.attributes['content'].value.strip).size.zero?
+            v
+          end
+        end
+
+        h.merge(name => value)
+      end
+
+      attrs.inject(defl){ |d, (k,v)| d << [k, v] }.flatten.compact
     end
   end
 end
