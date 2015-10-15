@@ -13,6 +13,7 @@ gem 'sidekiq'
 gem 'sidetiq'
 gem 'rest-client'
 gem 'mail'
+gem 'nokogiri'
 
 group :development do
   gem 'rake'

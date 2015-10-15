@@ -79,10 +79,10 @@ describe 'Standard Heathen tasks:' do
       expect(new_content.mime_type).to eq 'text/plain; charset=us-ascii'
     end
 
-    xit 'converts HTML documents' do
+    it 'converts HTML documents' do
       content = fixture('heathen/quickfox.html').read
       new_content = converter.convert 'txt', content
-      expect(new_content.mime_type).to eq 'text/plain; charset=utf-8'
+      expect(new_content.mime_type).to eq 'text/plain; charset=us-ascii'
     end
   end
 
