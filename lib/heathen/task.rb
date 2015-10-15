@@ -88,6 +88,8 @@ Heathen::Task.register 'txt', '.*' do
   case job.mime_type
     when %r[image/*]
       perform_task 'ocr_text'
+    when %r[application/pdf]
+      pdftotext
     else
       libreoffice format: 'txt'
   end
