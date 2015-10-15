@@ -356,6 +356,14 @@ will be a normal form post, sending these values:
 * `action`      - the conversion action performed
 * `path`        - a path to the converted file. You will have to tack the Colore URL base onto this
 
+## Depedendencies
+
+Colore expects the following commands to be available in it's PATH:
+
+* `libreoffice` - From LibreOffice, `libreoffice` on Debian.
+* `convert` - From ImageMagick, `imagemagick` on Debian.
+* `pdftotext` - From Poppler, `poppler-utils` on Debian.
+
 ## Contributing
 
 Want to contribute? Great!
