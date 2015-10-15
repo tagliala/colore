@@ -34,15 +34,43 @@ describe 'Standard Heathen tasks:' do
       new_content = converter.convert 'pdf', content
       expect(new_content.mime_type).to eq 'application/pdf; charset=binary'
     end
+
     it 'converts HTML documents' do
       content = fixture('heathen/quickfox.html').read
       new_content = converter.convert 'pdf', content
       expect(new_content.mime_type).to eq 'application/pdf; charset=binary'
     end
+
     it 'converts Office documents' do
       content = fixture('heathen/msword.docx').read
       new_content = converter.convert 'pdf', content
       expect(new_content.mime_type).to eq 'application/pdf; charset=binary'
+    end
+  end
+
+  context 'txt' do
+    it 'converts odt' do
+      content = fixture('heathen/ooword.odt').read
+      new_content = converter.convert 'txt', content
+      expect(new_content.mime_type).to eq 'text/plain; charset=utf-8'
+    end
+
+    it 'converts docx' do
+      content = fixture('heathen/msword.docx').read
+      new_content = converter.convert 'txt', content
+      expect(new_content.mime_type).to eq 'text/plain; charset=utf-8'
+    end
+
+    xit 'converts pdf' do
+      content = fixture('heathen/quickfox.pdf').read
+      new_content = converter.convert 'txt', content
+      expect(new_content.mime_type).to eq 'text/plain; charset=utf-8'
+    end
+
+    xit 'converts HTML documents' do
+      content = fixture('heathen/quickfox.html').read
+      new_content = converter.convert 'txt', content
+      expect(new_content.mime_type).to eq 'text/plain; charset=utf-8'
     end
   end
 

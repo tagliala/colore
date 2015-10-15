@@ -31,7 +31,14 @@ module Heathen
           'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'odt',
           'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'ods',
           'application/vnd.openxmlformats-officedocument.presentationml.presentation' => 'odp',
+        },
+        'txt' => {
+          '.*' => 'txt'
         }
+      }
+
+      conversion_methods = {
+        'txt' => 'txt:Text'
       }
 
       raise InvalidParameterInStep.new('format', format) unless suffixes[format.to_s]
@@ -41,14 +48,16 @@ module Heathen
       end
       raise InvalidMimeTypeInStep.new('(various document formats)', job.mime_type) unless to_suffix
 
-      target_file = "#{job.content_file}.#{to_suffix}"
+      conversion_method = conversion_methods[to_suffix] || to_suffix
+      target_file       = "#{job.content_file}.#{to_suffix}"
       executioner.execute(
         'libreoffice',
-        '--convert-to', to_suffix,
+        '--convert-to', conversion_method,
         '--outdir', sandbox_dir,
         job.content_file,
         '--headless',
       )
+
       raise ConversionFailed.new(executioner.last_messages) if executioner.last_exit_status != 0
       raise ConversionFailed.new("Cannot find converted file (looking for #{File.basename(target_file)})" ) unless File.exist? target_file
       c = File.read(target_file)

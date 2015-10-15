@@ -82,6 +82,15 @@ Heathen::Task.register 'ooffice', '.*' do
   libreoffice format: 'ooffice'
 end
 
+Heathen::Task.register 'txt', '.*' do
+  case job.mime_type
+    when %r[image/*]
+      perform_task 'ocr_text'
+    else
+      libreoffice format: 'txt'
+  end
+end
+
 # support legacy method
 Heathen::Task.register 'doc', '.*' do
   perform_task 'msoffice'
