@@ -55,11 +55,13 @@ end
 
 Heathen::Task.register 'ocr', 'image/.*' do
   convert_image to: :tiff, params: '-depth 8 -density 300 -background white +matte'
+  job.reset_content_file!
   tesseract format: 'pdf'
 end
 
 Heathen::Task.register 'ocr_text', 'image/.*' do
   convert_image to: :tiff, params: '-depth 8 -density 300 -background white +matte'
+  job.reset_content_file!
   tesseract format: nil
 end
 

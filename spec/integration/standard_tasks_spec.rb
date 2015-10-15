@@ -21,8 +21,14 @@ describe 'Standard Heathen tasks:' do
   end
 
   context 'ocr_text' do
-    it 'runs' do
+    it 'converts jpeg' do
       content = fixture('heathen/quickfox.jpg').read
+      new_content = converter.convert 'ocr_text', content
+      expect(new_content.mime_type).to eq 'text/plain; charset=us-ascii'
+    end
+
+    it 'converts bmp' do
+      content = fixture('heathen/quickfox.bmp').read
       new_content = converter.convert 'ocr_text', content
       expect(new_content.mime_type).to eq 'text/plain; charset=us-ascii'
     end
