@@ -87,5 +87,18 @@ describe Heathen::Processor do
         expect(@job.content.mime_type).to eq 'application/vnd.oasis.opendocument.presentation; charset=binary'
       end
     end
+
+    context 'convert to TXT' do
+      it 'from MS word' do
+        new_job ms_word_content
+        @processor.libreoffice format: 'txt'
+        expect(@job.content.mime_type).to eq 'text/plain; charset=utf-8'
+      end
+      it 'from OO word' do
+        new_job oo_word_content
+        @processor.libreoffice format: 'txt'
+        expect(@job.content.mime_type).to eq 'text/plain; charset=utf-8'
+      end
+    end
   end
 end

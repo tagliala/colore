@@ -56,5 +56,10 @@ module Heathen
       end
       @tempfile.path
     end
+
+    # Call this to reset the tempfile between multisteps tasks
+    def reset_content_file!
+      @tempfile = nil
+    end
   end
 end

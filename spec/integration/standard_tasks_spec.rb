@@ -21,8 +21,14 @@ describe 'Standard Heathen tasks:' do
   end
 
   context 'ocr_text' do
-    it 'runs' do
+    it 'converts jpeg' do
       content = fixture('heathen/quickfox.jpg').read
+      new_content = converter.convert 'ocr_text', content
+      expect(new_content.mime_type).to eq 'text/plain; charset=us-ascii'
+    end
+
+    it 'converts bmp' do
+      content = fixture('heathen/quickfox.bmp').read
       new_content = converter.convert 'ocr_text', content
       expect(new_content.mime_type).to eq 'text/plain; charset=us-ascii'
     end
@@ -34,15 +40,49 @@ describe 'Standard Heathen tasks:' do
       new_content = converter.convert 'pdf', content
       expect(new_content.mime_type).to eq 'application/pdf; charset=binary'
     end
+
     it 'converts HTML documents' do
       content = fixture('heathen/quickfox.html').read
       new_content = converter.convert 'pdf', content
       expect(new_content.mime_type).to eq 'application/pdf; charset=binary'
     end
+
     it 'converts Office documents' do
       content = fixture('heathen/msword.docx').read
       new_content = converter.convert 'pdf', content
       expect(new_content.mime_type).to eq 'application/pdf; charset=binary'
+    end
+  end
+
+  context 'txt' do
+    it 'converts odt' do
+      content = fixture('heathen/ooword.odt').read
+      new_content = converter.convert 'txt', content
+      expect(new_content.mime_type).to eq 'text/plain; charset=utf-8'
+    end
+
+    it 'converts docx' do
+      content = fixture('heathen/msword.docx').read
+      new_content = converter.convert 'txt', content
+      expect(new_content.mime_type).to eq 'text/plain; charset=utf-8'
+    end
+
+    it 'converts images' do
+      content = fixture('heathen/quickfox.jpg').read
+      new_content = converter.convert 'txt', content
+      expect(new_content.mime_type).to eq 'text/plain; charset=us-ascii'
+    end
+
+    it 'converts pdf' do
+      content = fixture('heathen/quickfox.pdf').read
+      new_content = converter.convert 'txt', content
+      expect(new_content.mime_type).to eq 'text/plain; charset=us-ascii'
+    end
+
+    it 'converts HTML documents' do
+      content = fixture('heathen/quickfox.html').read
+      new_content = converter.convert 'txt', content
+      expect(new_content.mime_type).to eq 'text/plain; charset=us-ascii'
     end
   end
 

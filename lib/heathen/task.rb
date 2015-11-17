@@ -55,11 +55,13 @@ end
 
 Heathen::Task.register 'ocr', 'image/.*' do
   convert_image to: :tiff, params: '-depth 8 -density 300 -background white +matte'
+  job.reset_content_file!
   tesseract format: 'pdf'
 end
 
 Heathen::Task.register 'ocr_text', 'image/.*' do
   convert_image to: :tiff, params: '-depth 8 -density 300 -background white +matte'
+  job.reset_content_file!
   tesseract format: nil
 end
 
@@ -80,6 +82,19 @@ end
 
 Heathen::Task.register 'ooffice', '.*' do
   libreoffice format: 'ooffice'
+end
+
+Heathen::Task.register 'txt', '.*' do
+  case job.mime_type
+    when %r[image/*]
+      perform_task 'ocr_text'
+    when %r[text/html]
+      htmltotext
+    when %r[application/pdf]
+      pdftotext
+    else
+      libreoffice format: 'txt'
+  end
 end
 
 # support legacy method
