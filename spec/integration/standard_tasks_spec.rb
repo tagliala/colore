@@ -58,13 +58,13 @@ describe 'Standard Heathen tasks:' do
     it 'converts odt' do
       content = fixture('heathen/ooword.odt').read
       new_content = converter.convert 'txt', content
-      expect(new_content.mime_type).to eq 'text/plain; charset=utf-8'
+      expect(new_content.mime_type).to eq 'text/plain; charset=us-ascii'
     end
 
     it 'converts docx' do
       content = fixture('heathen/msword.docx').read
       new_content = converter.convert 'txt', content
-      expect(new_content.mime_type).to eq 'text/plain; charset=utf-8'
+      expect(new_content.mime_type).to eq 'text/plain; charset=us-ascii'
     end
 
     it 'converts images' do

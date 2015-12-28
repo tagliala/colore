@@ -92,12 +92,12 @@ describe Heathen::Processor do
       it 'from MS word' do
         new_job ms_word_content
         @processor.libreoffice format: 'txt'
-        expect(@job.content.mime_type).to eq 'text/plain; charset=utf-8'
+        expect(@job.content.mime_type).to eq 'text/plain; charset=us-ascii'
       end
       it 'from OO word' do
         new_job oo_word_content
         @processor.libreoffice format: 'txt'
-        expect(@job.content.mime_type).to eq 'text/plain; charset=utf-8'
+        expect(@job.content.mime_type).to eq 'text/plain; charset=us-ascii'
       end
     end
   end
