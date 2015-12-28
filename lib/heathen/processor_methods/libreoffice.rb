@@ -44,7 +44,7 @@ module Heathen
       end
       raise InvalidMimeTypeInStep.new('(various document formats)', job.mime_type) unless to_suffix
 
-      target_file       = "#{job.content_file}.#{to_suffix}"
+      target_file = "#{job.content_file}.#{to_suffix}"
 
       if to_suffix == 'txt'
         pdf_file       = "#{job.content_file}.pdf"
@@ -74,7 +74,6 @@ module Heathen
       raise ConversionFailed.new(executioner.last_messages) if executioner.last_exit_status != 0
       raise ConversionFailed.new("Cannot find converted file (looking for #{File.basename(target_file)})" ) unless File.exist? target_file
 
-      c = File.read(target_file)
       job.content = File.read(target_file)
       File.unlink(target_file)
     end
