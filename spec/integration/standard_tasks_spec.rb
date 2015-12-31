@@ -90,7 +90,7 @@ describe 'Standard Heathen tasks:' do
     it 'runs' do
       content = fixture('heathen/ooword.odt').read
       new_content = converter.convert 'msoffice', content
-      expect(ms_mime_types).to include(new_content.mime_type)
+      expect(ms_word_mime_types).to include(new_content.mime_type)
     end
   end
 
@@ -106,7 +106,7 @@ describe 'Standard Heathen tasks:' do
     it 'runs' do
       content = fixture('heathen/ooword.odt').read
       new_content = converter.convert 'doc', content
-      expect(ms_mime_types).to include(new_content.mime_type)
+      expect(ms_word_mime_types).to include(new_content.mime_type)
     end
   end
 end

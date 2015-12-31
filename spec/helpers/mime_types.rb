@@ -1,4 +1,4 @@
-def ms_mime_types
+def ms_word_mime_types
   ['application/vnd.openxmlformats-officedocument.wordprocessingml.document; charset=binary',
    'application/zip; charset=binary']
 end

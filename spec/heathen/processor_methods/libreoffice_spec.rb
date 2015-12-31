@@ -55,7 +55,7 @@ describe Heathen::Processor do
       it 'from OO word' do
         new_job oo_word_content
         @processor.libreoffice format: 'msoffice'
-        expect(ms_mime_types).to include(@job.content.mime_type)
+        expect(ms_word_mime_types).to include(@job.content.mime_type)
       end
       it 'from OO spreadsheet' do
         new_job oo_spreadsheet_content
