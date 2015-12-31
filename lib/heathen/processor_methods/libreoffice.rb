@@ -47,7 +47,6 @@ module Heathen
       target_file = "#{job.content_file}.#{to_suffix}"
 
       if to_suffix == 'txt'
-        pdf_file       = "#{job.content_file}.pdf"
         executioner.execute(
           'libreoffice',
           '--convert-to', 'pdf',
@@ -58,7 +57,7 @@ module Heathen
 
         executioner.execute(
           'pdftotext',
-          pdf_file,
+          "#{job.content_file}.pdf",
           target_file
         )
       else
