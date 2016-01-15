@@ -58,13 +58,13 @@ describe 'Standard Heathen tasks:' do
     it 'converts odt' do
       content = fixture('heathen/ooword.odt').read
       new_content = converter.convert 'txt', content
-      expect(new_content.mime_type).to eq 'text/plain; charset=utf-8'
+      expect(new_content.mime_type).to eq 'text/plain; charset=us-ascii'
     end
 
     it 'converts docx' do
       content = fixture('heathen/msword.docx').read
       new_content = converter.convert 'txt', content
-      expect(new_content.mime_type).to eq 'text/plain; charset=utf-8'
+      expect(new_content.mime_type).to eq 'text/plain; charset=us-ascii'
     end
 
     it 'converts images' do
@@ -90,7 +90,7 @@ describe 'Standard Heathen tasks:' do
     it 'runs' do
       content = fixture('heathen/ooword.odt').read
       new_content = converter.convert 'msoffice', content
-      expect(new_content.mime_type).to eq 'application/vnd.openxmlformats-officedocument.wordprocessingml.document; charset=binary'
+      expect(ms_word_mime_types).to include(new_content.mime_type)
     end
   end
 
@@ -98,7 +98,7 @@ describe 'Standard Heathen tasks:' do
     it 'runs' do
       content = fixture('heathen/msword.docx').read
       new_content = converter.convert 'ooffice', content
-      expect(new_content.mime_type).to eq 'application/xml; charset=us-ascii'
+      expect(oo_mime_types).to include(new_content.mime_type)
     end
   end
 
@@ -106,7 +106,7 @@ describe 'Standard Heathen tasks:' do
     it 'runs' do
       content = fixture('heathen/ooword.odt').read
       new_content = converter.convert 'doc', content
-      expect(new_content.mime_type).to eq 'application/vnd.openxmlformats-officedocument.wordprocessingml.document; charset=binary'
+      expect(ms_word_mime_types).to include(new_content.mime_type)
     end
   end
 end
