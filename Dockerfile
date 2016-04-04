@@ -14,8 +14,8 @@ RUN apt-get -y install \
   libxml2-dev \
   libxslt-dev
 
-ADD ./Gemfile /colore
-ADD ./Gemfile.lock /colore
+ADD ./Gemfile /colore/
+ADD ./Gemfile.lock /colore/
 
 RUN bundle config build.nokogiri --use-system-libraries
 RUN bundle install
@@ -23,6 +23,6 @@ RUN bundle install
 # We use the Debian version instead
 RUN rm /usr/local/bundle/bin/wkhtmltopdf
 
-ADD ./ /colore
+ADD ./ /colore/
 
 RUN (cd /colore && git log --format="%H" -n 1 > REVISION && rm -rf .git)
