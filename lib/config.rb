@@ -1,4 +1,5 @@
 require 'yaml'
+require 'erb'
 
 module Colore
   #
@@ -29,13 +30,13 @@ module Colore
 
     def self.config
       @config ||= begin
-        yaml = YAML.load File.read(config_file_path)
+        yaml = YAML.load(ERB.new(File.read(config_file_path)).result)
         c = new
         c.storage_directory = yaml['storage_directory']
-        c.legacy_url_base = yaml['legacy_url_base']
+        c.legacy_url_base   = yaml['legacy_url_base']
         c.legacy_purge_days = yaml['legacy_purge_days'].to_i
-        c.redis_url = yaml['redis_url']
-        c.redis_namespace = yaml['redis_namespace']
+        c.redis_url         = yaml['redis_url']
+        c.redis_namespace   = yaml['redis_namespace']
         c
       end
     end

@@ -13,5 +13,5 @@ storage_directory: storage
 legacy_purge_days: 2
 
 # Sidekiq configuration settings - which redis to use and namespace
-redis_url: redis://localhost:6379/4
+redis_url: <%= ENV['REDIS_URL'] %>
 redis_namespace: colore
