@@ -11,4 +11,6 @@ $: << BASE + 'lib'
 require 'app'
 require 'config/initializers/sidekiq'
 
-run Colore::App
+require 'sidekiq/web'
+
+run Rack::URLMap.new('/' => Colore::App, '/sidekiq' => Sidekiq::Web)

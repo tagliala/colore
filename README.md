@@ -379,6 +379,12 @@ ARGS="$@"
 exec java -jar /usr/share/java/tika-app.jar $ARGS
 ```
 
+## Security notes
+
+Colore does not implement any authentication mechanism. It is up to you to
+prevent access to it via nginx. The sidekiq web UI is exposed on `/sidekiq`,
+and access to it as well should be filtered by your means.
+
 ## Contributing
 
 Want to contribute? Great!
