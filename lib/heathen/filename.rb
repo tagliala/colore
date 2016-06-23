@@ -7,7 +7,7 @@ module Heathen
     def self.suggest filename, mime_type
       ext = File.extname(filename)
       temp_file = filename[0..-(ext.length+1)]
-      ext = MIME::Types[mime_type].first.preferred_extension rescue 'unknown'
+      ext = MIME::Types[mime_type].first.preferred_extension rescue 'txt' # FIXME use a saner extension
       "#{temp_file}.#{ext}"
     end
 
