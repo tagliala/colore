@@ -8,7 +8,7 @@ module Heathen
       target_file = temp_file_name
       wkhtmltopdf = Colore::C_.wkhtmltopdf_path || 'wkhtmltopdf'
       executioner.execute(
-        *[wkhtmltopdf,
+        *[wkhtmltopdf, '-q',
         _wkhtmltopdf_options(job.content),
         params.split(/ +/),
         job.content_file('.html'),
