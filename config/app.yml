@@ -16,5 +16,8 @@ legacy_purge_days: 2
 redis_url: redis://localhost:6379/4
 redis_namespace: colore
 
+# Conversion processes log
+conversion_log: converter.log
+
 # If set, will run this executable, rather than looking for a ruby gem
 wkhtmltopdf_path: /usr/local/bin/wkhtmltopdf

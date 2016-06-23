@@ -23,6 +23,8 @@ module Colore
     attr_accessor :redis_namespace
     # Path to the wkhtmltopdf binary
     attr_accessor :wkhtmltopdf_path
+    # Path to the Heathen conversion log
+    attr_accessor :conversion_log
 
     def self.config_file_path
       # BASE/config/app.yml
@@ -39,6 +41,7 @@ module Colore
         c.redis_url = yaml['redis_url']
         c.redis_namespace = yaml['redis_namespace']
         c.wkhtmltopdf_path = yaml['wkhtmltopdf_path']
+        c.conversion_log = yaml['wkhtmltopdf_log']
         c
       end
     end

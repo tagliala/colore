@@ -14,7 +14,7 @@ module Colore
     before do
       @storage_dir = Pathname.new( C_.storage_directory )
       @legacy_url_base = C_.legacy_url_base || url('/')
-      @logger = Logger.new(STDOUT)
+      @logger = Logger.new(C_.conversion_log || STDOUT)
     end
 
     #
