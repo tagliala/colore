@@ -44,23 +44,19 @@ module Heathen
       end
       raise InvalidMimeTypeInStep.new('(various document formats)', job.mime_type) unless to_suffix
 
-      target_file = "#{job.content_file}.#{to_suffix}"
+      output = nil
 
       if to_suffix == 'txt'
         executioner.execute(
-          'libreoffice',
-          '--convert-to', 'pdf',
-          '--outdir', sandbox_dir,
+          'tika',
+          '--text',
           job.content_file,
-          '--headless',
+          binary: true
         )
 
-        executioner.execute(
-          'pdftotext',
-          "#{job.content_file}.pdf",
-          target_file
-        )
+        output = executioner.stdout
       else
+        target_file = "#{job.content_file}.#{to_suffix}"
         executioner.execute(
           'libreoffice',
           '--convert-to', to_suffix,
@@ -68,13 +64,18 @@ module Heathen
           job.content_file,
           '--headless',
         )
+
+        unless File.exist? target_file
+          raise ConversionFailed.new("Cannot find converted file (looking for #{File.basename(target_file)})" )
+        end
+
+        output = File.read(target_file)
+        File.unlink(target_file)
       end
 
       raise ConversionFailed.new(executioner.last_messages) if executioner.last_exit_status != 0
-      raise ConversionFailed.new("Cannot find converted file (looking for #{File.basename(target_file)})" ) unless File.exist? target_file
 
-      job.content = File.read(target_file)
-      File.unlink(target_file)
+      job.content = output
     end
   end
 end

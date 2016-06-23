@@ -3,15 +3,15 @@ module Heathen
     def pdftotext
       expect_mime_type 'application/pdf'
 
-      target_file = temp_file_name
       executioner.execute(
-        'pdftotext',
+        'tika',
+        '--text',
         job.content_file,
-        target_file
+        binary: true
       )
       raise ConversionFailed.new(executioner.last_messages) if executioner.last_exit_status != 0
-      job.content = File.read(target_file)
-      File.unlink(target_file)
+
+      job.content = executioner.stdout
     end
   end
 end

@@ -362,7 +362,22 @@ Colore expects the following commands to be available in it's PATH:
 
 * `libreoffice` - From LibreOffice, `libreoffice` on Debian.
 * `convert` - From ImageMagick, `imagemagick` on Debian.
-* `pdftotext` - From Poppler, `poppler-utils` on Debian.
+* `tika` - From Apache Tika, `libtika-java` on Debian.
+
+## Tika notes
+
+If your distribution does not provide a wrapper script for the `tika-app`, you
+can place the following one in `/usr/local/bin`:
+
+```sh
+#!/bin/sh
+
+ARGS="$@"
+
+[ $# -eq 0 ] && ARGS='--help'
+
+exec java -jar /usr/share/java/tika-app.jar $ARGS
+```
 
 ## Contributing
 
