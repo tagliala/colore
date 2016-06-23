@@ -6,7 +6,7 @@ module Colore
   # The Colore Converter is a glue class to allow Colore to access the Heathen conversion
   # system.
   class Converter
-    def initialize storage_dir: C_.storage_directory, logger: Logger.new(nil)
+    def initialize storage_dir: C_.storage_directory, logger: Logger.new(C_.conversion_log || STDOUT)
       @storage_dir = storage_dir
       @logger = logger
     end
