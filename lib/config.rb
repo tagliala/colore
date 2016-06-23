@@ -41,7 +41,7 @@ module Colore
         c.redis_url = yaml['redis_url']
         c.redis_namespace = yaml['redis_namespace']
         c.wkhtmltopdf_path = yaml['wkhtmltopdf_path']
-        c.conversion_log = yaml['wkhtmltopdf_log']
+        c.conversion_log = yaml['conversion_log']
         c
       end
     end
