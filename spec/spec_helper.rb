@@ -18,7 +18,7 @@ def fixture name
 end
 
 def spec_logger
-  Logger.new(nil)
+  Logger.new('spec/output.log')
 end
 
 Dir.glob( (SPEC_BASE+"helpers"+"**.rb").to_s ).each do |helper|
