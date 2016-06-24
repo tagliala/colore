@@ -50,6 +50,7 @@ module Heathen
     def content_file suffix=''
       @tempfile ||= begin
         t = Tempfile.new ["heathen",suffix], @sandbox_dir
+        t.binmode
         t.write @content
         t.close
         t
