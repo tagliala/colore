@@ -19,5 +19,8 @@ redis_namespace: colore
 # Conversion processes log
 conversion_log: converter.log
 
+# Errors log
+error_log: error.log
+
 # If set, will run this executable, rather than looking for a ruby gem
 wkhtmltopdf_path: /usr/local/bin/wkhtmltopdf

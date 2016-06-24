@@ -2,6 +2,7 @@ require 'pathname'
 require 'haml'
 require 'net/http'
 require 'sinatra/base'
+require 'pp'
 require_relative 'colore'
 
 module Colore
@@ -15,6 +16,7 @@ module Colore
       @storage_dir = Pathname.new( C_.storage_directory )
       @legacy_url_base = C_.legacy_url_base || url('/')
       @logger = Logger.new(C_.conversion_log || STDOUT)
+      @errlog = Logger.new(C_.error_log || STDERR)
     end
 
     #
@@ -40,7 +42,7 @@ module Colore
         doc.title = params[:title] if params[:title]
         call env.merge( 'REQUEST_METHOD'=>'POST' )
       rescue StandardError => e
-        respond e, e.message
+        respond_with_error e
       end
     end
 
@@ -80,7 +82,7 @@ module Colore
             path: doc.file_path( Colore::Document::CURRENT, filename ),
           }
       rescue StandardError => e
-        respond e, e.message
+        respond_with_error e
       end
     end
 
@@ -93,7 +95,7 @@ module Colore
         doc.save_metadata
         respond 200, 'Title updated'
       rescue StandardError => e
-        respond e, e.message
+        respond_with_error e
       end
     end
 
@@ -111,7 +113,7 @@ module Colore
         Sidekiq::ConversionWorker.perform_async doc_key, version, filename, action, params[:callback_url]
         respond 202, "Conversion initiated"
       rescue StandardError => e
-        respond e, e.message
+        respond_with_error e
       end
     end
 
@@ -124,7 +126,7 @@ module Colore
         Document.delete @storage_dir, DocKey.new(app,doc_id)
         respond 200, 'Document deleted'
       rescue StandardError => e
-        respond e, e.message
+        respond_with_error e
       end
     end
 
@@ -139,7 +141,7 @@ module Colore
         doc.save_metadata
         respond 200, 'Document version deleted'
       rescue StandardError => e
-        respond e, e.message
+        respond_with_error e
       end
     end
 
@@ -153,7 +155,7 @@ module Colore
         content_type ctype
         file
       rescue StandardError => e
-        respond e, e.message
+        respond_with_error e
       end
     end unless environment == :production
 
@@ -165,7 +167,7 @@ module Colore
         doc = Document.load @storage_dir, DocKey.new(app,doc_id)
         respond 200, 'Information retrieved', doc.to_hash
       rescue StandardError => e
-        respond e, e.message
+        respond_with_error e
       end
     end
 
@@ -183,7 +185,7 @@ module Colore
         content_type content.mime_type
         content
       rescue StandardError => e
-        respond e, e.message
+        respond_with_error e
       end
     end
 
@@ -249,6 +251,20 @@ module Colore
           description: message,
         }.merge(extra).to_json
       end
+
+      def respond_with_error error
+        log  = ''
+        log << "While processing #{request.request_method} #{request.path} with params:\n"
+        log << request.params.pretty_inspect
+        log << "\nthe following error occurred: #{error.class} #{error.message}"
+        log << "\nbacktrace:"
+        log << "  " << error.backtrace.join("\n  ")
+
+        log.split("\n").each {|line| @errlog.error(line) }
+
+        respond error, error.message
+      end
+
       # Renders all responses (including errors) in a standard JSON format.
       def legacy_error status, message, extra={}
         case status

@@ -28,14 +28,30 @@ module Colore
         message = "Document converted"
       rescue Heathen::TaskNotFound => e
         logger.warn "#{e.message}, will not attempt to re-process this request"
+        log_error e, doc_key_str, filename, action
         status = 400
         message = e.message
       rescue StandardError => e
         logger.warn "#{e.message}, will not attempt to re-process this request"
+        log_error e, doc_key_str, filename, action
         status = 500
         message = e.message
       ensure
         CallbackWorker.perform_async doc_key_str, version, action, new_filename, callback_url, status, message if callback_url
+      end
+
+      private
+
+      def log_error error, doc_key, filename, action
+        errlog = Logger.new(C_.error_log || STDERR)
+
+        log = ''
+        log << "While converting #{doc_key} (#{filename}) to #{action}"
+        log << "\nthe following error occurred: #{error.class} #{error.message}"
+        log << "\nbacktrace:"
+        log << "  " << error.backtrace.join("\n  ")
+
+        log.split("\n").each {|line| errlog.error(line) }
       end
     end
 
