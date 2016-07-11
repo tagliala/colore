@@ -71,6 +71,10 @@ Heathen::Task.register 'pdf', '.*' do
       perform_task 'ocr'
     when %r[text/html]
       wkhtmltopdf '-d 100 --encoding UTF-8'
+    when %r[message/rfc822]
+      rfc822totext
+      job.reset_content_file!
+      libreoffice format: 'pdf'
     else
       libreoffice format: 'pdf'
   end
@@ -92,6 +96,8 @@ Heathen::Task.register 'txt', '.*' do
       htmltotext
     when %r[application/pdf]
       pdftotext
+    when %r[message/rfc822]
+      rfc822totext
     else
       libreoffice format: 'txt'
   end

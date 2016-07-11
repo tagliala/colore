@@ -1,0 +1,34 @@
+                                                                                                                                                                                                                                                               
+MIME-Version: 1.0
+Received: by 10.79.89.194 with HTTP; Mon, 11 Jul 2016 06:41:56 -0700 (PDT)
+Date: Mon, 11 Jul 2016 16:41:56 +0300
+Delivered-To: employee@example.com
+Message-ID: <CABZS92tgEpMBnoPybJbsreEFJXbv0H1aP30NVUJ6F2Q9b5_BFw@mail.gmail.com>
+Subject: Important Reports
+From: Boss <boss@example.com>
+To: Employee <employee@example.com>
+Content-Type: multipart/mixed; boundary=001a114a86e6d9bf9605375c50db
+
+--001a114a86e6d9bf9605375c50db
+Content-Type: multipart/alternative; boundary=001a114a86e6d9bf7a05375c50d9
+
+--001a114a86e6d9bf7a05375c50d9
+Content-Type: text/plain; charset=UTF-8
+
+Attached are the important reports.
+
+--001a114a86e6d9bf7a05375c50d9
+Content-Type: text/html; charset=UTF-8
+
+<div dir="ltr">Attached are the important reports.
+</div>
+
+--001a114a86e6d9bf7a05375c50d9--
+--001a114a86e6d9bf9605375c50db
+Content-Type: text/csv; charset=US-ASCII; name="reports.csv"
+Content-Disposition: attachment; filename="reports.csv"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_iqi2vbfj0
+
+b25lLHR3byx0aHJlZQoxLDIsMwo=
+--001a114a86e6d9bf9605375c50db--
