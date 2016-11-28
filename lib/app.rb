@@ -206,7 +206,7 @@ module Colore
         else
           raise DocumentNotFound.new "Please specify either 'file' or 'url' POST variable"
         end
-        path = LegacyConverter.new.convert_and_store params[:action], body, params[:language]
+        path = LegacyConverter.new.convert_file params[:action], body, params[:language]
         converted_url = @legacy_url_base + path
         content_type 'application/json'
         {
