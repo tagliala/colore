@@ -1,10 +1,13 @@
 :verbose: true
 :concurrency: 5
 :queues:
+  - callback
+  - conversion
+  - purge
   - colore
 staging:
-  :concurrency: 4
+  :concurrency: 3
 production:
-  :concurrency: 4
+  :concurrency: 5
 development:
   :pidfile: ./tmp/pids/sidekiq.pid

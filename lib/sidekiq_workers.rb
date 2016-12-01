@@ -11,7 +11,7 @@ module Colore
     # This worker converts a document file to a new format and stores it.
     class ConversionWorker
       include ::Sidekiq::Worker
-      sidekiq_options queue: :colore, retry: false
+      sidekiq_options queue: :conversion, retry: false
 
       # Converts a document file to a new format. The converted file will be stored in
       # the document version directory. If the callback_url is specified, the [CallbackWorker]
@@ -58,7 +58,7 @@ module Colore
     # This worker sends responses back to the client application.
     class CallbackWorker
       include ::Sidekiq::Worker
-      sidekiq_options queue: :colore, retry: 5, backtrace: true
+      sidekiq_options queue: :callback, retry: 5, backtrace: true
 
       # Constructs a conversion response and POSTs it to the specified callback_url.
       # @param doc_key_str [String] the serialised [DocKey]
@@ -90,7 +90,7 @@ module Colore
     class LegacyPurgeWorker
       include ::Sidekiq::Worker
       include ::Sidetiq::Schedulable
-      sidekiq_options queue: :colore, retry: 0, backtrace: true
+      sidekiq_options queue: :purge, retry: 0, backtrace: true
       recurrence backfill: true do
         daily.hour_of_day(6)
       end
