@@ -78,7 +78,7 @@ module Colore
           doc_id: doc_key.doc_id,
           version: version,
           action: action,
-          path: (doc.file_path(version,new_filename) if status < 300),
+          path: (doc.file_path(version,new_filename) if status && status < 300),
         }
         RestClient.post callback_url, rsp_hash
       end
