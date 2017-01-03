@@ -61,12 +61,12 @@ describe Heathen::Processor do
         new_job oo_spreadsheet_content
         @processor.libreoffice format: 'msoffice'
         # I don't particularly like this - the 'file' command returns Microsoft OOXML, but filemagic just thinks it's binary
-        expect(@job.content.mime_type).to eq 'application/octet-stream; charset=binary'
+        expect(@job.content.mime_type).to eq 'application/zip; charset=binary'
       end
       it 'from OO presentation' do
         new_job oo_presentation_content
         @processor.libreoffice format: 'msoffice'
-        expect(@job.content.mime_type).to eq 'application/vnd.openxmlformats-officedocument.presentationml.presentation; charset=binary'
+        expect(@job.content.mime_type).to eq 'application/zip; charset=binary'
       end
     end
 
@@ -84,7 +84,7 @@ describe Heathen::Processor do
       it 'from MS powerpoint' do
         new_job ms_ppt_content
         @processor.libreoffice format: 'ooffice'
-        expect(@job.content.mime_type).to eq 'application/vnd.oasis.opendocument.presentation; charset=binary'
+        expect(@job.content.mime_type).to eq 'application/xml; charset=utf-8'
       end
     end
 

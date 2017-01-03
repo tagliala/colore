@@ -5,7 +5,7 @@ module Heathen
     # @param to [String] the format to convert to (suffix)
     # @param params [Array] optional parameters to pass to the convert program.
     def convert_image to: 'tiff', params: nil
-      expect_mime_type 'image/*'
+      expect_mime_type '.*'
 
       target_file = temp_file_name '', ".#{to.to_s}"
       executioner.execute(
