@@ -1,10 +1,25 @@
+dist: trusty
+sudo: required
+
+cache:
+ directories:
+   - $HOME/.m2
+
+jdk:
+  - oraclejdk8
+
 rvm:
   - 2.1.5
   - 2.2.0
 
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get install -qq libreoffice imagemagick libmagic-dev tesseract-ocr
+  - sudo apt-get install -qq maven wkhtmltopdf libreoffice imagemagick libmagic-dev tesseract-ocr
+
+before_script:
+  - mvn dependency:resolve -Dsilent=true -f spec/pom.xml
+  - sudo cp bin/tika /usr/local/bin/
+  - sudo cp bin/wkhtmltopdf /usr/local/bin/
 
 script:
   - bundle exec rspec

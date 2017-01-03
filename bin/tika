@@ -1,0 +1,7 @@
+#!/bin/sh
+
+ARGS="$@"
+
+[ $# -eq 0 ] && ARGS='--help'
+
+exec java -jar $HOME/.m2/repository/org/apache/tika/tika-app/1.7/tika-app-1.7.jar $ARGS
