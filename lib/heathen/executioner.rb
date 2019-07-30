@@ -1,3 +1,5 @@
+require 'timeout'
+
 module Heathen
 
   # An Executioner object will execute the given command, storing exit status,
@@ -23,7 +25,14 @@ module Heathen
 
       command = argv.map(&:to_s)
 
-      pid, status, @stdout, @stderr = _execute(*command, options)
+      pid, status, @stdout, @stderr =
+        begin
+          Timeout.timeout((ENV['EXECUTE_TIMEOUT'] || '600').to_i) do
+            _execute(*command, options)
+          end
+        rescue Timeout::Error
+          [0, -254, '', '']
+        end
 
       elapsed = Time.now.to_f - started
 
