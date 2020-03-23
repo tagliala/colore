@@ -239,7 +239,7 @@ describe Colore::App do
         action: 'pdf',
         file: Rack::Test::UploadedFile.new(__FILE__, 'application/ruby'),
       }
-      expect(foo).to receive(:convert_and_store).with(params[:action],String,nil) { 'foobar' }
+      expect(foo).to receive(:convert_file).with(params[:action],String,nil) { 'foobar' }
       post "/#{Colore::LegacyConverter::LEGACY}/convert", params
       expect(last_response.status).to eq 200
       expect(last_response.content_type).to eq 'application/json'
@@ -255,7 +255,7 @@ describe Colore::App do
         url: 'http://localhost/foo/bar',
       }
       expect(Net::HTTP).to receive(:get).with(URI(params[:url])) { 'The quick brown flox' }
-      expect(foo).to receive(:convert_and_store).with(params[:action],String,nil) { 'foobar' }
+      expect(foo).to receive(:convert_file).with(params[:action],String,nil) { 'foobar' }
       post "/#{Colore::LegacyConverter::LEGACY}/convert", params
       expect(last_response.status).to eq 200
       expect(last_response.content_type).to eq 'application/json'
@@ -270,7 +270,7 @@ describe Colore::App do
         action: 'pdf',
         file: Rack::Test::UploadedFile.new(__FILE__, 'application/ruby'),
       }
-      allow(foo).to receive(:convert_and_store) { raise 'Argh' }
+      allow(foo).to receive(:convert_file) { raise 'Argh' }
       post "/#{Colore::LegacyConverter::LEGACY}/convert", params
       expect(last_response.status).to eq 500
       expect(last_response.content_type).to eq 'application/json'

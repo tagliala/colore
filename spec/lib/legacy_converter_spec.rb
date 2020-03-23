@@ -11,7 +11,7 @@ describe Colore::LegacyConverter do
     allow(Colore::C_).to receive(:storage_directory) { tmp_storage_dir }
     foo = double(Heathen::Converter)
     allow(Heathen::Converter).to receive(:new) { foo }
-    allow(foo).to receive(:convert) { "The quick brown fox" }
+    allow(foo).to receive(:convert).and_return("The quick brown fox")
   end
 
   after do
