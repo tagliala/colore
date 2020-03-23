@@ -39,4 +39,4 @@ RSpec::configure do |rspec|
 end
 
 require 'sidekiq/testing'
-Sidekiq::Logging.logger = nil
+Sidekiq.logger = nil
