@@ -4,7 +4,7 @@
 #
 require 'rest_client'
 require 'sidekiq'
-require 'sidetiq'
+require 'sidekiq-cron'
 
 module Colore
   module Sidekiq
@@ -88,12 +88,14 @@ module Colore
     # apps using the legacy service will request the file shortly after posting the
     # original, so won't need it after then).
     class LegacyPurgeWorker
+
       include ::Sidekiq::Worker
-      include ::Sidetiq::Schedulable
       sidekiq_options queue: :purge, retry: 0, backtrace: true
-      recurrence backfill: true do
-        daily.hour_of_day(6)
-      end
+
+      ::Sidekiq::Cron::Job.load_from_hash('legacy_purge_worker' => {
+        'cron'  => '0 6 * * *',
+        'class' => self.name
+      })
 
       # Looks for old legacy docs and deletes them
       def perform

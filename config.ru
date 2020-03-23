@@ -12,5 +12,6 @@ require 'app'
 require 'config/initializers/sidekiq'
 
 require 'sidekiq/web'
+require 'sidekiq/cron/web'
 
 run Rack::URLMap.new('/' => Colore::App, '/sidekiq' => Sidekiq::Web)
