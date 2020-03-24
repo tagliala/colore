@@ -8,8 +8,9 @@ require "sinatra"
 BASE=Pathname.new(__FILE__).realpath.parent
 $: << BASE
 $: << BASE + 'lib'
-require 'app'
 require 'config/initializers/sidekiq'
+
+require 'app'
 
 require 'sidekiq/web'
 require 'sidekiq/cron/web'
