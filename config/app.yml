@@ -24,3 +24,6 @@ error_log: error.log
 
 # If set, will run this executable, rather than looking for a ruby gem
 wkhtmltopdf_path: /usr/local/bin/wkhtmltopdf
+
+# If set, will run this executable rather than looking into PATH
+#libreoffice_path: /usr/bin/libreoffice
