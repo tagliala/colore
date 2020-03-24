@@ -32,8 +32,11 @@ module Heathen
       end
       logger.info("[#{pid}] completed in %02.4f" % elapsed)
 
-      logger.info "  stdout: '#@stdout'\n" unless @stdout.empty? unless options[:binary]
-      logger.info "  stderr: '#@stderr'\n" unless @stderr.empty?
+      @stdout.strip!
+      @stderr.strip!
+
+      logger.info "  stdout: '#@stdout'" unless @stdout.empty? unless options[:binary]
+      logger.info "  stderr: '#@stderr'" unless @stderr.empty?
 
       @last_exit_status = status
       @last_messages = {stdout: @stdout, stderr: @stderr}
