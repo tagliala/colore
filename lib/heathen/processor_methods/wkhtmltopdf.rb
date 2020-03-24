@@ -15,7 +15,6 @@ module Heathen
         target_file,
         ].flatten
       )
-      @logger.error(executioner.last_messages[:stderr])
       raise ConversionFailed.new('PDF converter rejected the request') if executioner.last_exit_status != 0
       job.content = File.read(target_file)
       File.unlink(target_file)
