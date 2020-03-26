@@ -3,3 +3,6 @@ public
 doc
 tmp/*
 spec/output.log
+
+# Docker
+docker/colore/variables.env

@@ -1,0 +1,29 @@
+#
+# Colore's primary configuration file
+#
+
+# Where the documents are stored
+storage_directory: storage
+
+# Legacy (heathen) method support.
+# legacy_url_base will overwrite local URL base to allow proxy navigation;
+# this is needed 'cos the full URL is returned in the legacy convert JSON.
+#legacy_url_base: http://localhost:9240/
+# number of days to keep converted legacy files
+legacy_purge_days: 2
+
+# Sidekiq configuration settings - which redis to use and namespace
+redis_url: redis://redis:6379/4
+redis_namespace: colore
+
+# Conversion processes log
+conversion_log: converter.log
+
+# Errors log
+error_log: error.log
+
+# If set, will run this executable, rather than looking for a ruby gem
+wkhtmltopdf_path: /usr/local/bin/wkhtmltopdf
+
+# If set, will run this executable rather than looking into PATH
+#libreoffice_path: /usr/bin/libreoffice

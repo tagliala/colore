@@ -1,0 +1,39 @@
+version: '3.7'
+
+services:
+  colore:
+    build:
+      context: .
+      dockerfile: ./docker/colore/Dockerfile
+    container_name: colore
+    env_file:
+      - ./docker/colore/variables.env
+    depends_on:
+      - redis
+    ports:
+      - 9240:9240
+    restart: on-failure
+    volumes:
+      - colore:/var/www/colore/storage
+  redis:
+    image: redis:5.0.8-alpine
+    container_name: redis
+    restart: on-failure
+    volumes:
+      - redis:/data
+  sidekiq:
+    build:
+      context: .
+      dockerfile: ./docker/colore/Dockerfile
+    container_name: sidekiq
+    env_file:
+      - ./docker/colore/variables.env
+    depends_on:
+      - redis
+    restart: on-failure
+    volumes:
+      - colore:/var/www/colore/storage
+    command: bundle exec sidekiq -C config/sidekiq.yml -r ./lib/sidekiq_app.rb
+volumes:
+  colore:
+  redis:

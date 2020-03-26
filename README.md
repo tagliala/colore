@@ -379,6 +379,17 @@ ARGS="$@"
 exec java -jar /usr/share/java/tika-app.jar $ARGS
 ```
 
+## Docker
+
+Developing on localhost with Colore might not be easy, because of the number
+of dependencies it requires.
+
+We provide a Docker implementation to speed up local development.
+
+1. Copy `docker/colore/variables.env.example` to `docker/colore/variables.env`
+2. Run `docker-compose up`
+3. Have fun with Colore up and running on `http://localhost:9240/`
+
 ## Security notes
 
 Colore does not implement any authentication mechanism. It is up to you to
