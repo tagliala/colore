@@ -35,8 +35,8 @@ module Heathen
       @stdout.strip!
       @stderr.strip!
 
-      logger.info "  stdout: '#@stdout'" unless @stdout.empty? unless options[:binary]
-      logger.info "  stderr: '#@stderr'" unless @stderr.empty?
+      logger.info "[#{pid}] stdout: '#@stdout'" unless @stdout.empty? unless options[:binary]
+      logger.info "[#{pid}] stderr: '#@stderr'" unless @stderr.empty?
 
       @last_exit_status = status
       @last_messages = {stdout: @stdout, stderr: @stderr}
